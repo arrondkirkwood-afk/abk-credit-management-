@@ -1,4 +1,4 @@
-const CACHE_NAME = "abk-credit-management-v1";
+const CACHE_NAME = "abk-credit-management-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
