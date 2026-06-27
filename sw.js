@@ -1,4 +1,4 @@
-const CACHE_NAME = "abk-credit-management-v3";
+const CACHE_NAME = "abk-credit-management-v4";
 const APP_SHELL = [
   "./",
   "./index.html",
@@ -103,7 +103,7 @@ function patchIndexHtml(html) {
   output = replaceAllText(output, `        line-height: 1.35;
         margin: 0;`, `        line-height: 1.5;
         margin: 0;`);
-  const enhancedAnalyzerBlock = String.raw`      function analyzeReportText(text) {
+  const enhancedAnalyzerBlock = `      function analyzeReportText(text) {
         var source = String(text || "");
         var fullSsnDetected = containsFullSsn(source);
         var chunks = splitReportIntoChunks(source);
@@ -405,13 +405,50 @@ function patchIndexHtml(html) {
   output = replaceAllText(output, 'return "Legal Basis: This is a direct dispute regarding information', 'return "This is a direct dispute regarding information');
   output = replaceAllText(output, 'return "Legal Basis: This dispute concerns the accuracy', 'return "This dispute concerns the accuracy');
   output = replaceAllText(output, 'if (draft.advanced.extraNotes) rows.push("- Additional notes: " + draft.advanced.extraNotes);', 'if (draft.advanced.extraNotes && !isAutoAnalysisNote(draft.advanced.extraNotes)) rows.push("- Additional notes: " + draft.advanced.extraNotes);');
-  output = replaceAllText(output, 'function documentsBlock(draft) {', 'function isAutoAnalysisNote(value) {\\n        return /^Created from credit report analysis\\\\b/i.test(String(value || "").trim());\\n      }\\n\\n      function documentsBlock(draft) {');
+  if (!output.includes('function isAutoAnalysisNote(value)')) {
+    output = replaceAllText(output, 'function documentsBlock(draft) {', `function isAutoAnalysisNote(value) {
+        return /^Created from credit report analysis\\b/i.test(String(value || "").trim());
+      }
+
+      function documentsBlock(draft) {`);
+  }
   output = replaceAllText(output, 'return draft.accountNumber || "account reference not provided";', 'return draft.accountNumber || "Not provided";');
-  output = replaceAllText(output, 'function hasFactualReason(draft) {', 'function subjectDetail(draft) {\\n        return draft.accountName || draft.itemKind || accountReference(draft);\\n      }\\n\\n      function hasFactualReason(draft) {');
+  if (!output.includes('function subjectDetail(draft)')) {
+    output = replaceAllText(output, 'function hasFactualReason(draft) {', `function subjectDetail(draft) {
+        return draft.accountName || draft.itemKind || accountReference(draft);
+      }
+
+      function hasFactualReason(draft) {`);
+  }
   output = replaceAllText(output, 'var accountName = collectionAgency || creditorName || firstLikelyName(clean);', 'var accountName = cleanAccountName(collectionAgency || creditorName || firstLikelyName(clean));');
   output = replaceAllText(output, 'draft.accountName = stripSensitiveText(item.accountName || item.collectionAgency || item.originalCreditor || "");', 'draft.accountName = cleanAccountName(stripSensitiveText(item.accountName || item.collectionAgency || item.originalCreditor || ""));');
   output = replaceAllText(output, 'draft.advanced.extraNotes = "Created from credit report analysis. Extracted issue: " + stripSensitiveText(item.possibleIssue || "Possible factual issue.");', 'draft.advanced.extraNotes = "";');
-  output = replaceAllText(output, 'if (!/^(account|balance|status|date|opened|closed|past due|payment|bureau|credit report|transunion|experian|equifax)\\b/i.test(lines[i])) {\\n            return stripSensitiveText(lines[i]).slice(0, 80);\\n          }', 'if (isLikelyCreditorName(lines[i])) {\\n            return stripSensitiveText(lines[i]).slice(0, 80);\\n          }');
-  output = replaceAllText(output, 'function detectBureauFromContext(text) {', 'function isLikelyCreditorName(value) {\\n        var text = String(value || "").trim();\\n        if (!text) return false;\\n        if (/^(account|balance|current balance|high balance|credit limit|status|date|opened|closed|past due|past due amount|payment|payment history|bureau|credit report|transunion|experian|equifax|prepared for|confirmation|report number|report date|personal information|consumer|contact|address|phone|email|original creditor|current creditor|remarks|comments|terms|responsibility|monthly payment|last reported|date reported|inquiries|public records|collections|potentially negative)\\\\b/i.test(text)) return false;\\n        if (/^(arron|arrond|kirkwood|annual credit report)\\\\b/i.test(text)) return false;\\n        if (/^(date|confirmation|original creditor|current creditor|balance|status|account number)\\\\s*[:#-]/i.test(text)) return false;\\n        if (/^[a-z ]+:\\\\s*$/i.test(text)) return false;\\n        if (/@/.test(text)) return false;\\n        if (/\\\\b\\\\d{5}(?:-\\\\d{4})?\\\\b/.test(text) && /\\\\b(?:street|st|lane|ln|road|rd|drive|dr|houston|texas|tx)\\\\b/i.test(text)) return false;\\n        if (text.length > 80) return false;\\n        return /[a-z]/i.test(text) && !/^\\\\$?\\\\d[\\\\d,]*(?:\\\\.\\\\d{2})?$/.test(text);\\n      }\\n\\n      function cleanAccountName(value) {\\n        var text = cleanExtractedValue(value);\\n        if (!isLikelyCreditorName(text)) return "";\\n        return text.slice(0, 80);\\n      }\\n\\n      function detectBureauFromContext(text) {');
+  output = replaceAllText(output, `if (!/^(account|balance|status|date|opened|closed|past due|payment|bureau|credit report|transunion|experian|equifax)\\b/i.test(lines[i])) {
+            return stripSensitiveText(lines[i]).slice(0, 80);
+          }`, `if (isLikelyCreditorName(lines[i])) {
+            return stripSensitiveText(lines[i]).slice(0, 80);
+          }`);
+  if (!output.includes('function isLikelyCreditorName(value)')) {
+    output = replaceAllText(output, 'function detectBureauFromContext(text) {', `function isLikelyCreditorName(value) {
+        var text = String(value || "").trim();
+        if (!text) return false;
+        if (/^(account|balance|current balance|high balance|credit limit|status|date|opened|closed|past due|past due amount|payment|payment history|bureau|credit report|transunion|experian|equifax|prepared for|confirmation|report number|report date|personal information|consumer|contact|address|phone|email|original creditor|current creditor|remarks|comments|terms|responsibility|monthly payment|last reported|date reported|inquiries|public records|collections|potentially negative)\\b/i.test(text)) return false;
+        if (/^(arron|arrond|kirkwood|annual credit report)\\b/i.test(text)) return false;
+        if (/^(date|confirmation|original creditor|current creditor|balance|status|account number)\\s*[:#-]/i.test(text)) return false;
+        if (/^[a-z ]+:\\s*$/i.test(text)) return false;
+        if (/@/.test(text)) return false;
+        if (/\\b\\d{5}(?:-\\d{4})?\\b/.test(text) && /\\b(?:street|st|lane|ln|road|rd|drive|dr|houston|texas|tx)\\b/i.test(text)) return false;
+        if (text.length > 80) return false;
+        return /[a-z]/i.test(text) && !/^\\$?\\d[\\d,]*(?:\\.\\d{2})?$/.test(text);
+      }
+
+      function cleanAccountName(value) {
+        var text = cleanExtractedValue(value);
+        if (!isLikelyCreditorName(text)) return "";
+        return text.slice(0, 80);
+      }
+
+      function detectBureauFromContext(text) {`);
+  }
   return output;
 }
