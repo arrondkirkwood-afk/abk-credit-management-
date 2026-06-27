@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">ABK Credit Management</title>
+  <rect width="512" height="512" rx="96" fill="#0f5b66"/>
+  <path d="M146 124h220c22 0 40 18 40 40v184c0 22-18 40-40 40H146c-22 0-40-18-40-40V164c0-22 18-40 40-40Z" fill="#ffffff"/>
+  <path d="M154 180h204M154 232h204M154 284h136" fill="none" stroke="#245d91" stroke-width="24" stroke-linecap="round"/>
+  <path d="M328 276l35 35 68-82" fill="none" stroke="#1d6f42" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
