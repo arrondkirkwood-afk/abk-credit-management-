@@ -1,0 +1,3092 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ABK Credit Management</title>
+  <meta name="theme-color" content="#0f5b66">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="ABK Credit Management">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./icons/icon.svg">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #ffffff;
+      --panel: #ffffff;
+      --soft: #f5f7f9;
+      --soft-blue: #eef6f8;
+      --ink: #17202c;
+      --muted: #617081;
+      --line: #dce3ea;
+      --primary: #0f5b66;
+      --primary-dark: #0b434b;
+      --accent: #245d91;
+      --warning: #a15c06;
+      --danger: #b42318;
+      --success: #1d6f42;
+      --shadow: 0 18px 44px rgba(23, 32, 44, 0.08);
+      --radius: 8px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      margin: 0;
+      min-width: 320px;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .app {
+      min-height: 100vh;
+    }
+
+    .topbar {
+      align-items: center;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      padding: 18px clamp(16px, 4vw, 44px);
+    }
+
+    .brand {
+      display: grid;
+      gap: 4px;
+    }
+
+    .brand h1 {
+      font-size: clamp(1.65rem, 4vw, 2.6rem);
+      letter-spacing: 0;
+      line-height: 1.05;
+      margin: 0;
+    }
+
+    .brand p {
+      color: var(--muted);
+      font-size: clamp(0.98rem, 2vw, 1.08rem);
+      line-height: 1.4;
+      margin: 0;
+    }
+
+    .home-button {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      color: #314052;
+      font-weight: 760;
+      min-height: 40px;
+      padding: 9px 14px;
+    }
+
+    .top-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    main {
+      margin: 0 auto;
+      max-width: 1120px;
+      padding: 28px clamp(16px, 4vw, 44px) 48px;
+    }
+
+    .notice {
+      background: #fff8ed;
+      border: 1px solid #f3c77e;
+      border-left: 6px solid var(--warning);
+      border-radius: var(--radius);
+      color: #693b08;
+      line-height: 1.45;
+      margin-bottom: 18px;
+      padding: 13px 15px;
+    }
+
+    .status {
+      background: #eaf7ef;
+      border: 1px solid #b8dec7;
+      border-radius: var(--radius);
+      color: #155a34;
+      line-height: 1.4;
+      margin-bottom: 18px;
+      padding: 12px 14px;
+    }
+
+    .screen {
+      display: grid;
+      gap: 18px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 22px;
+      padding: clamp(14px, 3vw, 24px) 0 8px;
+    }
+
+    .hero-copy {
+      display: grid;
+      gap: 8px;
+      max-width: 780px;
+    }
+
+    .eyebrow {
+      color: var(--primary);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h2 {
+      font-size: clamp(1.5rem, 4vw, 2.2rem);
+      line-height: 1.12;
+      margin-bottom: 0;
+    }
+
+    h3 {
+      font-size: 1.05rem;
+      line-height: 1.25;
+      margin-bottom: 10px;
+    }
+
+    .large-actions {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .big-action,
+    .option-card,
+    .panel,
+    .saved-card,
+    .analysis-card,
+    .tracker-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .big-action {
+      align-items: start;
+      color: var(--ink);
+      display: grid;
+      gap: 8px;
+      min-height: 158px;
+      padding: 22px;
+      text-align: left;
+    }
+
+    .big-action strong {
+      font-size: 1.2rem;
+      line-height: 1.2;
+    }
+
+    .big-action span,
+    .muted,
+    .small-note {
+      color: var(--muted);
+      line-height: 1.42;
+    }
+
+    .big-action.primary {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .big-action.primary span {
+      color: #e7f4f6;
+    }
+
+    .offline-feature-note {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      display: grid;
+      gap: 8px;
+      min-height: 158px;
+      padding: 22px;
+    }
+
+    .offline-feature-note span {
+      color: var(--muted);
+      line-height: 1.42;
+    }
+
+    .panel {
+      padding: 18px;
+    }
+
+    .privacy-panel {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .panel-title-row {
+      align-items: center;
+      display: flex;
+      gap: 12px;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .panel-title-row h3 {
+      margin-bottom: 0;
+    }
+
+    .wizard {
+      display: grid;
+      gap: 18px;
+    }
+
+    .progress {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      padding: 8px;
+    }
+
+    .step-pill {
+      align-items: center;
+      border-radius: 7px;
+      color: #455469;
+      display: flex;
+      font-size: 0.86rem;
+      font-weight: 760;
+      gap: 8px;
+      min-height: 40px;
+      padding: 8px;
+    }
+
+    .step-pill span {
+      align-items: center;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      display: inline-flex;
+      flex: 0 0 26px;
+      height: 26px;
+      justify-content: center;
+      width: 26px;
+    }
+
+    .step-pill.active {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .step-pill.active span {
+      background: #ffffff;
+      border-color: #ffffff;
+      color: var(--primary);
+    }
+
+    .option-grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .option-grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .option-card {
+      align-items: flex-start;
+      display: flex;
+      gap: 10px;
+      min-height: 72px;
+      padding: 14px;
+    }
+
+    .option-card input {
+      flex: 0 0 auto;
+      margin-top: 4px;
+      min-height: auto;
+      width: auto;
+    }
+
+    .option-card strong {
+      display: block;
+      line-height: 1.25;
+    }
+
+    .option-card small {
+      color: var(--muted);
+      display: block;
+      line-height: 1.35;
+      margin-top: 4px;
+    }
+
+    .form-grid {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+    }
+
+    .field label {
+      color: #263242;
+      font-size: 0.9rem;
+      font-weight: 780;
+    }
+
+    input,
+    select,
+    textarea {
+      background: #ffffff;
+      border: 1px solid #cbd5df;
+      border-radius: 7px;
+      color: var(--ink);
+      min-height: 44px;
+      padding: 10px 11px;
+      width: 100%;
+    }
+
+    textarea {
+      line-height: 1.45;
+      min-height: 108px;
+      resize: vertical;
+    }
+
+    .wide {
+      grid-column: 1 / -1;
+    }
+
+    details {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+    }
+
+    summary {
+      color: #273445;
+      cursor: pointer;
+      font-weight: 820;
+      list-style-position: inside;
+    }
+
+    details .form-grid {
+      margin-top: 14px;
+    }
+
+    .button-row {
+      align-items: center;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .primary-button,
+    .secondary-button,
+    .ghost-button,
+    .danger-button {
+      border-radius: 7px;
+      border: 1px solid transparent;
+      font-weight: 820;
+      min-height: 44px;
+      padding: 10px 15px;
+    }
+
+    .primary-button {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .primary-button:hover {
+      background: var(--primary-dark);
+    }
+
+    .secondary-button {
+      background: var(--soft-blue);
+      border-color: #b7d8de;
+      color: #104c55;
+    }
+
+    .ghost-button {
+      background: #ffffff;
+      border-color: var(--line);
+      color: #354151;
+    }
+
+    .danger-button {
+      background: #fff1f0;
+      border-color: #ffb3ad;
+      color: var(--danger);
+    }
+
+    .recommendation {
+      background: var(--soft-blue);
+      border: 1px solid #b7d8de;
+      border-radius: var(--radius);
+      display: grid;
+      gap: 8px;
+      padding: 16px;
+    }
+
+    .recommendation strong {
+      color: #104c55;
+      font-size: 1.06rem;
+    }
+
+    .warning-list {
+      background: #fff8ed;
+      border: 1px solid #f3c77e;
+      border-radius: var(--radius);
+      color: #693b08;
+      line-height: 1.45;
+      padding: 13px 15px;
+    }
+
+    .warning-list ul {
+      margin-bottom: 0;
+    }
+
+    .letter-box {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      min-height: 560px;
+      white-space: pre-wrap;
+    }
+
+    .saved-list,
+    .analysis-list,
+    .tracker-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .saved-card,
+    .analysis-card,
+    .tracker-card {
+      display: grid;
+      gap: 12px;
+      padding: 16px;
+    }
+
+    .report-box {
+      min-height: 260px;
+    }
+
+    .pdf-status-card {
+      background: var(--soft-blue);
+      border: 1px solid #b7d8de;
+      border-radius: var(--radius);
+      color: #183e46;
+      display: grid;
+      gap: 8px;
+      line-height: 1.45;
+      margin-top: 14px;
+      padding: 14px;
+    }
+
+    .pdf-status-card ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .text-preview {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      color: #253142;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      line-height: 1.45;
+      max-height: 260px;
+      overflow: auto;
+      padding: 14px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .saved-main {
+      align-items: flex-start;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .facts {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .fact {
+      background: var(--soft);
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      min-height: 64px;
+      padding: 10px;
+    }
+
+    .fact span {
+      color: var(--muted);
+      display: block;
+      font-size: 0.78rem;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+
+    .fact strong {
+      display: block;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+      word-break: break-word;
+    }
+
+    .empty {
+      background: var(--soft);
+      border: 1px dashed #b8c4d0;
+      border-radius: var(--radius);
+      color: var(--muted);
+      line-height: 1.45;
+      padding: 22px;
+      text-align: center;
+    }
+
+    .print-area {
+      display: none;
+    }
+
+    @media (max-width: 920px) {
+      .large-actions,
+      .option-grid,
+      .option-grid.three,
+      .form-grid,
+      .facts,
+      .progress {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar,
+      .top-actions,
+      .saved-main,
+      .panel-title-row {
+        align-items: stretch;
+        display: grid;
+        justify-content: stretch;
+      }
+    }
+
+    @media print {
+      @page {
+        margin: 1in;
+      }
+
+      html,
+      body {
+        background: #ffffff;
+        color: #000000;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      .app {
+        display: none;
+      }
+
+      .print-area {
+        background: #ffffff;
+        color: #000000;
+        display: block;
+        font-family: "Times New Roman", Times, Georgia, serif;
+        font-size: 12pt;
+        line-height: 1.35;
+        margin: 0;
+        padding: 0;
+        text-align: left;
+        white-space: pre-wrap;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="app" id="app"></div>
+  <div class="print-area" id="printArea"></div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      var APP_NAME = "ABK Credit Management";
+      var APP_VERSION = "v1.0";
+      var APP_BUILD = "online";
+      var ENABLE_PDF_ANALYZER = true;
+      var STORAGE_KEY = "credit-dispute-manager-standalone-v1";
+      var PDF_JS_PATH = "./libs/pdf.min.js";
+      var PDF_WORKER_PATH = "./libs/pdf.worker.min.js";
+      var pdfJsLoadPromise = null;
+      var pdfWorkerLoadPromise = null;
+
+      var itemKinds = [
+        "Collection account",
+        "Charge-off account",
+        "Late payment",
+        "Account that is not mine",
+        "Paid or settled account reporting wrong",
+        "Duplicate account",
+        "Other credit report error"
+      ];
+
+      var recipients = [
+        "Experian",
+        "Equifax",
+        "TransUnion",
+        "Collection agency",
+        "Original creditor / furnisher"
+      ];
+
+      var bureauRecipients = {
+        Experian: "Experian\nP.O. Box 4500\nAllen, TX 75013",
+        Equifax: "Equifax Information Services LLC\nP.O. Box 740256\nAtlanta, GA 30374-0256",
+        TransUnion: "TransUnion LLC\nP.O. Box 2000\nChester, PA 19016-2000"
+      };
+
+      var wrongOptions = [
+        { id: "wrong_balance", label: "The balance is wrong" },
+        { id: "not_mine", label: "The account is not mine" },
+        { id: "duplicate", label: "The same debt is showing more than once" },
+        { id: "wrong_dates", label: "The dates are wrong" },
+        { id: "wrong_original_creditor", label: "The original creditor is wrong or missing" },
+        { id: "wrong_status", label: "The account status is wrong" },
+        { id: "paid_wrong", label: "It was paid or settled but still reports wrong" },
+        { id: "not_validated", label: "The collector has not validated the debt" },
+        { id: "no_authority", label: "The collector has not proven authority to collect" },
+        { id: "bureau_mismatch", label: "The information is different across credit bureaus" },
+        { id: "too_old", label: "The account is too old to report" },
+        { id: "other_error", label: "Other factual error" }
+      ];
+
+      var desiredResults = [
+        "Correct",
+        "Delete",
+        "Validate",
+        "Update",
+        "Investigate"
+      ];
+
+      var supportDocs = [
+        "Copy of credit report page",
+        "Copy of identification",
+        "Proof of address",
+        "Collection letter",
+        "Payment or settlement proof",
+        "Creditor statement",
+        "Prior dispute letter",
+        "Prior dispute response",
+        "Certified mail receipt",
+        "Other document"
+      ];
+
+      var responseOptions = ["No response yet", "Response received", "Partial response", "Not applicable"];
+      var resultOptions = ["Pending", "Deleted", "Corrected", "Updated", "Validated", "Verified", "Ignored"];
+      var simpleSteps = ["Item", "Recipient", "Problem", "Details", "Generate"];
+
+      var scoreOnlyPatterns = [
+        /hurts? my score/i,
+        /raise my score/i,
+        /increase my score/i,
+        /just want (it|this) removed/i,
+        /remove.*because.*negative/i,
+        /delete.*because.*score/i,
+        /only because.*negative/i
+      ];
+
+      var admissionPatterns = [
+        /\bi owe\b/i,
+        /\bi will pay\b/i,
+        /\bi promise to pay\b/i,
+        /\bmy debt\b/i,
+        /\bwhen i pay\b/i,
+        /\bpayment plan\b/i,
+        /\bsettle this debt\b/i
+      ];
+
+      var app = document.getElementById("app");
+      var printArea = document.getElementById("printArea");
+      var reportTextDraft = "";
+      var pdfUploadState = defaultPdfUploadState();
+      var state = loadState();
+      var statusMessage = "ABK Credit Management saves records only in this browser on this device. Export a backup before updating.";
+
+      render();
+      registerPwa();
+
+      document.addEventListener("click", function (event) {
+        var target = event.target.closest("[data-action]");
+        if (!target) return;
+        var action = target.dataset.action;
+
+        if (action === "home") goHome();
+        if (action === "new") startNewLetter();
+        if (action === "analyze") openAnalyzer();
+        if (action === "saved") setScreen("saved");
+        if (action === "tracker") setScreen("tracker");
+        if (action === "scan-report") scanReportText();
+        if (action === "analyze-pasted-text") analyzePastedText();
+        if (action === "create-from-analysis") createLetterFromAnalysis(target.dataset.id);
+        if (action === "bulk-create-analysis") bulkCreateAnalysisLetters();
+        if (action === "export-analysis") exportAnalysisJson();
+        if (action === "print-analysis") printAnalysisSummary();
+        if (action === "export-backup") exportBackup();
+        if (action === "next") nextStep();
+        if (action === "back") previousStep();
+        if (action === "generate") generateLetter();
+        if (action === "save-dispute") saveDispute();
+        if (action === "print-letter") printLetter();
+        if (action === "copy-letter") copyLetter();
+        if (action === "start-over") startNewLetter();
+        if (action === "open-dispute") openDispute(target.dataset.id);
+        if (action === "edit-dispute") editDispute(target.dataset.id);
+        if (action === "delete-dispute") deleteDispute(target.dataset.id);
+        if (action === "delete-tracker") deleteTracker(target.dataset.id);
+        if (action === "reset-data") resetLocalData();
+        render();
+      });
+
+      document.addEventListener("input", function (event) {
+        var el = event.target;
+        if (el.dataset.field) {
+          setDraftField(el.dataset.field, el.value);
+        }
+        if (el.dataset.reportText) {
+          reportTextDraft = el.value;
+        }
+        if (el.dataset.analysisField) {
+          updateAnalysisItem(el.dataset.analysisId, el.dataset.analysisField, el.value);
+        }
+        if (el.dataset.personal) {
+          state.personal[el.dataset.personal] = el.value;
+          saveState();
+        }
+        if (el.dataset.advanced) {
+          state.draft.advanced[el.dataset.advanced] = el.value;
+          saveState();
+        }
+        if (el.dataset.letterBody) {
+          state.currentLetter.body = el.value;
+          saveState();
+        }
+        if (el.dataset.trackerField) {
+          var row = findTracker(el.dataset.trackerId);
+          if (row) {
+            updateTrackerField(row, el.dataset.trackerField, el.value);
+          }
+        }
+      });
+
+      document.addEventListener("change", function (event) {
+        var el = event.target;
+        if (el.dataset.field) {
+          setDraftField(el.dataset.field, el.value);
+        }
+        if (el.dataset.reportFile) {
+          handleReportFileChange(el);
+          return;
+        }
+        if (el.dataset.backupFile && el.files && el.files[0]) {
+          importBackupFile(el.files[0]);
+          return;
+        }
+        if (el.dataset.analysisSelected) {
+          updateAnalysisItem(el.dataset.analysisId, "selected", el.checked);
+        }
+        if (el.dataset.analysisField) {
+          updateAnalysisItem(el.dataset.analysisId, el.dataset.analysisField, el.value);
+        }
+        if (el.dataset.wrong) {
+          toggleArray(state.draft.wrongs, el.value, el.checked);
+        }
+        if (el.dataset.doc) {
+          toggleArray(state.draft.supportingDocs, el.value, el.checked);
+        }
+        if (el.dataset.trackerField) {
+          var row = findTracker(el.dataset.trackerId);
+          if (row) {
+            updateTrackerField(row, el.dataset.trackerField, el.value);
+          }
+        }
+        saveState();
+        render();
+      });
+
+      function render() {
+        app.innerHTML =
+          '<header class="topbar">' +
+            '<div class="brand">' +
+              '<h1>ABK Credit Management</h1>' +
+              '<p><strong>' + APP_NAME + ' ' + APP_VERSION + (APP_BUILD === "offline" ? " Offline Backup" : "") + '</strong></p>' +
+              '<p>Create professional credit dispute letters and track responses.</p>' +
+            '</div>' +
+            '<div class="top-actions">' +
+              '<button class="home-button" type="button" data-action="home">Home</button>' +
+              '<button class="home-button" type="button" data-action="reset-data">Reset Local Data</button>' +
+            '</div>' +
+          '</header>' +
+          '<main>' +
+            '<div class="notice"><strong>Truthful disputes only.</strong> The app uses firm, professional wording, but it does not create fake claims, fake identity theft language, UCC language, sovereign-citizen language, payment promises, or liability admissions. Do not enter a full SSN.</div>' +
+            '<div class="status">' + escapeHtml(statusMessage) + '</div>' +
+            renderScreen() +
+          '</main>';
+      }
+
+      function renderScreen() {
+        if (state.screen === "wizard") return renderWizard();
+        if (state.screen === "preview") return renderPreview();
+        if (state.screen === "saved") return renderSavedDisputes();
+        if (state.screen === "tracker") return renderTracker();
+        if (state.screen === "analyze") return renderAnalyzer();
+        return renderHome();
+      }
+
+      function renderHome() {
+        return '<section class="screen hero">' +
+          '<div class="hero-copy">' +
+            '<p class="eyebrow">Simple guided workflow</p>' +
+            '<h2>Start a letter, save the dispute, then track the response.</h2>' +
+            '<p class="muted">The legal details stay in the background. You answer plain-English questions and the app builds the right kind of letter.</p>' +
+          '</div>' +
+          '<div class="large-actions">' +
+            '<button class="big-action primary" type="button" data-action="new"><strong>Create New Letter</strong><span>Use the 5-step wizard to build a focused dispute letter.</span></button>' +
+            (ENABLE_PDF_ANALYZER
+              ? '<button class="big-action" type="button" data-action="analyze"><strong>Analyze Credit Report PDF</strong><span>Upload a text-based PDF or paste report text, then choose what to dispute.</span></button>'
+              : '<div class="offline-feature-note"><strong>Offline backup mode</strong><span>PDF analysis works best in the online version. Manual letter creation works offline.</span></div>') +
+            '<button class="big-action" type="button" data-action="saved"><strong>Saved Disputes</strong><span>Open previous letters, edit records, or continue tracking.</span></button>' +
+            '<button class="big-action" type="button" data-action="tracker"><strong>Dispute Tracker</strong><span>Log mailing dates, deadlines, responses, and next actions.</span></button>' +
+          '</div>' +
+          '<div class="privacy-panel">' +
+            '<strong>Privacy note</strong>' +
+            '<p class="muted">Your credit report is processed locally in your browser. This app does not upload your report to a server.</p>' +
+            '<p class="muted">Your records are saved only in this browser on this device. Use Export Backup before replacing or updating this app.</p>' +
+            (APP_BUILD === "offline"
+              ? '<p class="muted">PDF analysis works best in the online version. Manual letter creation works offline.</p>'
+              : '<p class="muted">To update the app, export a backup first, then deploy or replace the newer ABK Credit Management Online files.</p>') +
+            '<div class="button-row" style="margin-top:12px">' +
+              '<button class="secondary-button" type="button" data-action="export-backup">Export Backup</button>' +
+              '<label class="secondary-button" for="backup-file">Import Backup</label>' +
+              '<input id="backup-file" data-backup-file="true" type="file" accept=".json,application/json" style="position:absolute;left:-9999px;width:1px;height:1px">' +
+            '</div>' +
+          '</div>' +
+        '</section>';
+      }
+
+      function renderAnalyzer() {
+        if (!ENABLE_PDF_ANALYZER) {
+          return '<section class="screen">' +
+            '<div class="panel-title-row">' +
+              '<div>' +
+                '<p class="eyebrow">Offline backup</p>' +
+                '<h2>PDF Analysis Is In The Online Version</h2>' +
+              '</div>' +
+            '</div>' +
+            '<div class="notice"><strong>Offline backup mode.</strong> PDF analysis works best in the online version. Manual letter creation works offline, and backup files are compatible between the online and offline versions.</div>' +
+            '<div class="button-row">' +
+              '<button class="primary-button" type="button" data-action="new">Create New Letter</button>' +
+              '<button class="secondary-button" type="button" data-action="saved">Saved Disputes</button>' +
+              '<button class="secondary-button" type="button" data-action="tracker">Dispute Tracker</button>' +
+            '</div>' +
+          '</section>';
+        }
+        var items = state.analyzer.items || [];
+        var selectedCount = items.filter(function (item) { return item.selected; }).length;
+        return '<section class="screen">' +
+          '<div class="panel-title-row">' +
+            '<div>' +
+              '<p class="eyebrow">Local report scan</p>' +
+              '<h2>Analyze Credit Report PDF</h2>' +
+            '</div>' +
+            '<div class="button-row">' +
+              '<button class="secondary-button" type="button" data-action="export-analysis" ' + (items.length ? "" : "disabled") + '>Export JSON</button>' +
+              '<button class="ghost-button" type="button" data-action="print-analysis" ' + (items.length ? "" : "disabled") + '>Print Summary</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="notice"><strong>Sensitive information warning.</strong> Credit reports contain sensitive information. Your credit report is processed locally in your browser. This app does not upload your report to a server. Review all extracted information before generating letters. The raw report text is not saved permanently by the app.</div>' +
+          '<section class="panel">' +
+            '<h3>Upload PDF credit report</h3>' +
+            renderFileModeWarning() +
+            '<p class="small-note">Select a text-based PDF credit report. The app will read it locally in this browser and show progress below.</p>' +
+            '<div class="button-row" style="margin-top:12px">' +
+              '<label class="primary-button" for="report-file">Choose PDF Credit Report</label>' +
+              '<input id="report-file" data-report-file="true" type="file" accept=".pdf,application/pdf" style="position:absolute;left:-9999px;width:1px;height:1px">' +
+            '</div>' +
+            renderPdfStatus(items.length) +
+            '<p class="small-note" style="margin-top:10px">PDF analysis uses PDF.js in this app and runs in your browser. Text-based PDFs work best; scanned/image PDFs may need OCR elsewhere or manual copy/paste.</p>' +
+          '</section>' +
+          '<section class="panel">' +
+            '<h3>PDF did not read? Paste report text here instead.</h3>' +
+            '<textarea class="report-box" data-report-text="true" placeholder="Paste report text here. For best results, include account names, balances, status, dates, and bureau sections.">' + escapeHtml(reportTextDraft) + '</textarea>' +
+            '<div class="button-row" style="margin-top:12px">' +
+              '<button class="secondary-button" type="button" data-action="analyze-pasted-text">Analyze Pasted Text</button>' +
+            '</div>' +
+          '</section>' +
+          (state.analyzer.fullSsnWarning ? '<div class="warning-list"><strong>Privacy warning:</strong><ul><li>' + escapeHtml(state.analyzer.fullSsnWarning) + '</li></ul></div>' : "") +
+          renderExtractedTextPreview(items) +
+          (items.length ? renderAnalysisResults(items, selectedCount) : '<div class="empty">No extracted accounts yet. Upload a text-based PDF or paste report text and analyze it.</div>') +
+        '</section>';
+      }
+
+      function renderFileModeWarning() {
+        if (!isFileMode()) return "";
+        return '<div class="warning-list"><strong>PDF upload warning:</strong><ul><li>PDF analysis may not work when this app is opened directly as a file. Use the ABK Credit Management Online hosted link for PDF upload. Manual letter creation still works.</li></ul></div>';
+      }
+
+      function renderPdfStatus(detectedCount) {
+        var lines = [];
+        lines.push(pdfUploadState.fileName ? "Selected file: " + pdfUploadState.fileName : "No file selected yet.");
+        if (pdfUploadState.history && pdfUploadState.history.length) {
+          lines = lines.concat(pdfUploadState.history);
+        } else if (pdfUploadState.status) {
+          lines.push(pdfUploadState.status);
+        }
+        if (pdfUploadState.pageStatus) lines.push(pdfUploadState.pageStatus);
+        lines.push("PDF.js loaded: " + (pdfUploadState.pdfJsLoaded ? "Yes" : "No"));
+        lines.push("Worker path: " + (pdfUploadState.workerPath || PDF_WORKER_PATH));
+        lines.push("Worker loaded: " + (pdfUploadState.workerLoaded ? "Yes" : "No"));
+        lines.push("PDF pages detected: " + (pdfUploadState.pageCount || 0));
+        lines.push("Text extracted: " + (pdfUploadState.characterCount || 0) + " characters");
+        if (pdfUploadState.pageCount) lines.push("Number of pages read: " + pdfUploadState.pageCount);
+        if (pdfUploadState.characterCount) lines.push("Extracted character count: " + pdfUploadState.characterCount);
+        lines.push("Detected possible accounts: " + detectedCount);
+        if (pdfUploadState.error) lines.push("Error: " + pdfUploadState.error);
+        lines = unique(lines);
+        return '<div class="pdf-status-card"><strong>PDF upload status</strong><ul>' +
+          lines.map(function (line) { return '<li>' + escapeHtml(line) + '</li>'; }).join("") +
+          '</ul></div>';
+      }
+
+      function renderExtractedTextPreview(items) {
+        if (!pdfUploadState.preview || items.length) return "";
+        return '<section class="panel">' +
+          '<h3>Extracted text preview</h3>' +
+          '<p class="small-note">The PDF was read, but no account cards were detected. Review this safe preview and paste or edit the text above if needed.</p>' +
+          '<pre class="text-preview">' + escapeHtml(pdfUploadState.preview) + '</pre>' +
+        '</section>';
+      }
+
+      function renderAnalysisResults(items, selectedCount) {
+        return '<section class="screen">' +
+          '<section class="panel">' +
+            '<div class="panel-title-row">' +
+              '<div><h3>Review possible dispute items</h3><p class="small-note">These are possible issues, not conclusions. Select only the items you want to dispute and edit anything the scan got wrong.</p></div>' +
+              '<button class="primary-button" type="button" data-action="bulk-create-analysis" ' + (selectedCount ? "" : "disabled") + '>Create Letters For Selected (' + selectedCount + ')</button>' +
+            '</div>' +
+          '</section>' +
+          '<div class="analysis-list">' + items.map(renderAnalysisCard).join("") + '</div>' +
+        '</section>';
+      }
+
+      function renderAnalysisCard(item) {
+        return '<article class="analysis-card">' +
+          '<div class="saved-main">' +
+            '<div>' +
+              '<label class="option-card" style="box-shadow:none;margin-bottom:10px"><input type="checkbox" data-analysis-selected="true" data-analysis-id="' + item.id + '" ' + checked(item.selected) + '><span><strong>I want to dispute this item</strong><small>Review and correct the extracted information first.</small></span></label>' +
+              '<h3>' + escapeHtml(item.accountName || "Unknown account") + '</h3>' +
+              '<p class="muted">' + escapeHtml(item.possibleIssue || "Possible issue detected") + ' | Confidence: ' + escapeHtml(item.confidence || "Low") + '</p>' +
+            '</div>' +
+            '<button class="secondary-button" type="button" data-action="create-from-analysis" data-id="' + item.id + '">Create Letter From This Item</button>' +
+          '</div>' +
+          '<div class="facts">' +
+            fact("Account type", item.itemKind) +
+            fact("Balance", item.claimedBalance) +
+            fact("Status", item.statusReported) +
+            fact("Bureau", item.bureau) +
+            fact("Reason", labelForWrong(item.mainReason)) +
+          '</div>' +
+          '<div class="form-grid">' +
+            analysisField(item, "Correct account name", "accountName") +
+            analysisField(item, "Correct balance", "claimedBalance") +
+            analysisField(item, "Correct original creditor", "originalCreditor") +
+            analysisSelect(item, "Correct bureau", "bureau", ["Experian", "Equifax", "TransUnion", "Multiple bureaus", "Not sure"]) +
+            analysisSelect(item, "Correct dispute reason", "mainReason", wrongOptions.map(function (option) { return option.id; })) +
+            analysisArea(item, "Notes explaining the factual issue", "notes") +
+          '</div>' +
+        '</article>';
+      }
+
+      function renderWizard() {
+        return '<section class="wizard">' +
+          renderProgress() +
+          renderWizardStep() +
+          '<div class="button-row">' +
+            '<button class="ghost-button" type="button" data-action="back" ' + (state.step === 1 ? "disabled" : "") + '>Back</button>' +
+            (state.step < 5
+              ? '<button class="primary-button" type="button" data-action="next">Next</button>'
+              : '<button class="primary-button" type="button" data-action="generate">Generate Letter</button>') +
+          '</div>' +
+        '</section>';
+      }
+
+      function renderProgress() {
+        return '<div class="progress">' + simpleSteps.map(function (label, index) {
+          var number = index + 1;
+          return '<div class="step-pill ' + (state.step === number ? "active" : "") + '"><span>' + number + '</span>' + label + '</div>';
+        }).join("") + '</div>';
+      }
+
+      function renderWizardStep() {
+        if (state.step === 1) return renderStepOne();
+        if (state.step === 2) return renderStepTwo();
+        if (state.step === 3) return renderStepThree();
+        if (state.step === 4) return renderStepFour();
+        return renderStepFive();
+      }
+
+      function renderStepOne() {
+        return '<section class="panel">' +
+          '<p class="eyebrow">Step 1</p>' +
+          '<h2>What kind of item are you dealing with?</h2>' +
+          '<div class="option-grid" style="margin-top:16px">' +
+            itemKinds.map(function (item) {
+              return radioCard("itemKind", item, state.draft.itemKind, item, descriptionForItem(item));
+            }).join("") +
+          '</div>' +
+        '</section>';
+      }
+
+      function renderStepTwo() {
+        return '<section class="panel">' +
+          '<p class="eyebrow">Step 2</p>' +
+          '<h2>Who is this letter going to?</h2>' +
+          '<div class="option-grid" style="margin-top:16px">' +
+            recipients.map(function (recipient) {
+              return radioCard("recipient", recipient, state.draft.recipient, recipient, descriptionForRecipient(recipient));
+            }).join("") +
+          '</div>' +
+        '</section>';
+      }
+
+      function renderStepThree() {
+        return '<section class="panel">' +
+          '<p class="eyebrow">Step 3</p>' +
+          '<h2>What is wrong with the reporting?</h2>' +
+          '<p class="muted">Choose every truthful issue that applies. Negative reporting by itself is not enough.</p>' +
+          '<div class="option-grid" style="margin-top:16px">' +
+            wrongOptions.map(function (option) {
+              return checkboxCard("wrong", option.id, state.draft.wrongs.indexOf(option.id) >= 0, option.label, "");
+            }).join("") +
+          '</div>' +
+        '</section>';
+      }
+
+      function renderStepFour() {
+        var d = state.draft;
+        return '<section class="screen">' +
+          '<section class="panel">' +
+            '<p class="eyebrow">Step 4</p>' +
+            '<h2>Enter basic account details</h2>' +
+            '<div class="form-grid" style="margin-top:16px">' +
+              field("Collection agency / creditor name", "accountName", d.accountName) +
+              field("Account number or last four digits", "accountNumber", d.accountNumber, "Use partial number only when possible") +
+              field("Claimed balance", "claimedBalance", d.claimedBalance) +
+              field("Original creditor", "originalCreditor", d.originalCreditor) +
+              selectField("Credit bureau reporting it", "bureau", d.bureau, ["Experian", "Equifax", "TransUnion", "Multiple bureaus", "Not sure"]) +
+              selectField("Desired result", "desiredResult", d.desiredResult, desiredResults) +
+              textArea("Short explanation of the problem", "explanation", d.explanation) +
+            '</div>' +
+          '</section>' +
+          '<details>' +
+            '<summary>Advanced Details</summary>' +
+            '<div class="form-grid">' +
+              advancedField("Date opened", "dateOpened", d.advanced.dateOpened, "date") +
+              advancedField("Date closed", "dateClosed", d.advanced.dateClosed, "date") +
+              advancedField("Date first delinquent", "dateFirstDelinquent", d.advanced.dateFirstDelinquent, "date") +
+              advancedField("Last payment date", "lastPaymentDate", d.advanced.lastPaymentDate, "date") +
+              advancedField("Current creditor", "currentCreditor", d.advanced.currentCreditor) +
+              advancedField("Previous dispute date", "previousDisputeDate", d.advanced.previousDisputeDate, "date") +
+              advancedField("Certified Mail Tracking Number", "certifiedMailNumber", d.advanced.certifiedMailNumber) +
+              advancedTextArea("Extra notes", "extraNotes", d.advanced.extraNotes) +
+            '</div>' +
+          '</details>' +
+          '<section class="panel">' +
+            '<h3>Your information for the letter header</h3>' +
+            '<p class="small-note">No full SSN is requested or stored.</p>' +
+            '<div class="form-grid">' +
+              personalField("Full name", "fullName", state.personal.fullName) +
+              personalField("Mailing address", "mailingAddress", state.personal.mailingAddress) +
+              personalField("City, State ZIP", "cityStateZip", state.personal.cityStateZip) +
+              personalField("Email or phone, optional", "contact", state.personal.contact) +
+            '</div>' +
+          '</section>' +
+        '</section>';
+      }
+
+      function renderStepFive() {
+        var recommendation = recommendLetter(state.draft);
+        var warnings = validationMessages(state.draft, recommendation);
+        return '<section class="screen">' +
+          '<section class="panel">' +
+            '<p class="eyebrow">Step 5</p>' +
+            '<h2>Generate Letter</h2>' +
+            '<div class="recommendation" style="margin-top:16px">' +
+              '<span class="muted">Recommended letter type</span>' +
+              '<strong>' + escapeHtml(recommendation.type) + '</strong>' +
+              '<p class="muted">' + escapeHtml(recommendation.reason) + '</p>' +
+            '</div>' +
+            (warnings.length ? renderWarnings(warnings) : "") +
+          '</section>' +
+          '<section class="panel">' +
+            '<h3>Supporting document checklist</h3>' +
+            '<div class="option-grid three">' +
+              supportDocs.map(function (doc) {
+                return checkboxCard("doc", doc, state.draft.supportingDocs.indexOf(doc) >= 0, doc, "");
+              }).join("") +
+            '</div>' +
+          '</section>' +
+        '</section>';
+      }
+
+      function renderPreview() {
+        if (!state.currentLetter) {
+          return '<section class="screen">' +
+            '<div class="empty">No letter is open right now. Start a new letter or open a saved dispute.</div>' +
+            '<div class="button-row"><button class="primary-button" type="button" data-action="new">Create New Letter</button><button class="secondary-button" type="button" data-action="saved">Saved Disputes</button></div>' +
+          '</section>';
+        }
+        return '<section class="screen">' +
+          '<div class="panel-title-row">' +
+            '<div>' +
+              '<p class="eyebrow">Letter preview</p>' +
+              '<h2>Review and edit before sending</h2>' +
+            '</div>' +
+            '<div class="button-row">' +
+              '<button class="primary-button" type="button" data-action="save-dispute">Save Dispute</button>' +
+              '<button class="secondary-button" type="button" data-action="print-letter">Print Letter</button>' +
+              '<button class="ghost-button" type="button" data-action="copy-letter">Copy Letter</button>' +
+              '<button class="ghost-button" type="button" data-action="start-over">Start Over</button>' +
+            '</div>' +
+          '</div>' +
+          '<section class="panel">' +
+            '<textarea class="letter-box" data-letter-body="true">' + escapeHtml(state.currentLetter.body || "") + '</textarea>' +
+          '</section>' +
+        '</section>';
+      }
+
+      function renderSavedDisputes() {
+        return '<section class="screen">' +
+          '<div class="panel-title-row">' +
+            '<div><p class="eyebrow">Saved records</p><h2>Saved Disputes</h2></div>' +
+            '<button class="primary-button" type="button" data-action="new">Create New Letter</button>' +
+          '</div>' +
+          (state.disputes.length
+            ? '<div class="saved-list">' + state.disputes.map(renderSavedCard).join("") + '</div>'
+            : '<div class="empty">No saved disputes yet. Create a letter, review it, then click Save Dispute.</div>') +
+        '</section>';
+      }
+
+      function renderSavedCard(dispute) {
+        return '<article class="saved-card">' +
+          '<div class="saved-main">' +
+            '<div>' +
+              '<h3>' + escapeHtml(dispute.accountName || "Untitled account") + '</h3>' +
+              '<p class="muted">' + escapeHtml(summaryOfWrongs(dispute)) + '</p>' +
+            '</div>' +
+            '<div class="button-row">' +
+              '<button class="secondary-button" type="button" data-action="open-dispute" data-id="' + dispute.id + '">Open</button>' +
+              '<button class="ghost-button" type="button" data-action="edit-dispute" data-id="' + dispute.id + '">Edit</button>' +
+              '<button class="danger-button" type="button" data-action="delete-dispute" data-id="' + dispute.id + '">Delete</button>' +
+            '</div>' +
+          '</div>' +
+          '<div class="facts">' +
+            fact("Recipient", dispute.recipient) +
+            fact("Letter type", dispute.letterType || "Not generated") +
+            fact("Date created", formatDate(dispute.createdAt)) +
+            fact("Status", dispute.status || "Draft") +
+            fact("Account", dispute.accountNumber || "Not provided") +
+          '</div>' +
+        '</article>';
+      }
+
+      function renderTracker() {
+        return '<section class="screen">' +
+          '<div class="panel-title-row">' +
+            '<div><p class="eyebrow">Simple response log</p><h2>Dispute Tracker</h2></div>' +
+            '<button class="primary-button" type="button" data-action="new">Create New Letter</button>' +
+          '</div>' +
+          (state.tracker.length
+            ? '<div class="tracker-list">' + state.tracker.map(renderTrackerCard).join("") + '</div>'
+            : '<div class="empty">No tracker entries yet. Saving a generated dispute creates one automatically.</div>') +
+        '</section>';
+      }
+
+      function renderTrackerCard(row) {
+        return '<article class="tracker-card">' +
+          '<div class="saved-main">' +
+            '<div><h3>' + escapeHtml(row.accountName || "Untitled account") + '</h3><p class="muted">' + escapeHtml(row.recipient || "Recipient not set") + " | " + escapeHtml(row.letterType || "Letter") + '</p></div>' +
+            '<button class="danger-button" type="button" data-action="delete-tracker" data-id="' + row.id + '">Delete</button>' +
+          '</div>' +
+          '<div class="form-grid">' +
+            trackerField(row, "Date mailed", "dateMailed", "date") +
+            trackerField(row, "Certified mail tracking number", "trackingNumber") +
+            trackerField(row, "Response deadline", "responseDeadline", "date") +
+            trackerField(row, "30-day follow-up date", "followUpDate", "date") +
+            trackerField(row, "45-day deadline", "extendedDeadline", "date") +
+            trackerSelect(row, "Response received", "responseReceived", responseOptions) +
+            trackerSelect(row, "Result", "result", resultOptions) +
+            trackerArea(row, "Next action", "nextAction") +
+          '</div>' +
+        '</article>';
+      }
+
+      function radioCard(fieldName, value, current, title, description) {
+        return '<label class="option-card"><input type="radio" name="' + fieldName + '" data-field="' + fieldName + '" value="' + escapeAttr(value) + '" ' + checked(current === value) + '><span><strong>' + escapeHtml(title) + '</strong>' + (description ? '<small>' + escapeHtml(description) + '</small>' : "") + '</span></label>';
+      }
+
+      function checkboxCard(kind, value, isChecked, title, description) {
+        var attr = kind === "wrong" ? "data-wrong" : "data-doc";
+        return '<label class="option-card"><input type="checkbox" ' + attr + '="true" value="' + escapeAttr(value) + '" ' + checked(isChecked) + '><span><strong>' + escapeHtml(title) + '</strong>' + (description ? '<small>' + escapeHtml(description) + '</small>' : "") + '</span></label>';
+      }
+
+      function field(label, key, value, placeholder) {
+        var id = "field-" + key;
+        return '<div class="field"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><input id="' + escapeAttr(id) + '" type="text" data-field="' + key + '" value="' + escapeAttr(value || "") + '" placeholder="' + escapeAttr(placeholder || "") + '"></div>';
+      }
+
+      function textArea(label, key, value) {
+        var id = "field-" + key;
+        return '<div class="field wide"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><textarea id="' + escapeAttr(id) + '" data-field="' + key + '">' + escapeHtml(value || "") + '</textarea></div>';
+      }
+
+      function selectField(label, key, value, options) {
+        var id = "field-" + key;
+        return '<div class="field"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><select id="' + escapeAttr(id) + '" data-field="' + key + '">' + options.map(function (option) {
+          return '<option value="' + escapeAttr(option) + '" ' + selected(option === value) + '>' + escapeHtml(option) + '</option>';
+        }).join("") + '</select></div>';
+      }
+
+      function advancedField(label, key, value, type) {
+        var id = "advanced-" + key;
+        return '<div class="field"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><input id="' + escapeAttr(id) + '" type="' + (type || "text") + '" data-advanced="' + key + '" value="' + escapeAttr(value || "") + '"></div>';
+      }
+
+      function advancedTextArea(label, key, value) {
+        var id = "advanced-" + key;
+        return '<div class="field wide"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><textarea id="' + escapeAttr(id) + '" data-advanced="' + key + '">' + escapeHtml(value || "") + '</textarea></div>';
+      }
+
+      function personalField(label, key, value) {
+        var id = "personal-" + key;
+        return '<div class="field"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><input id="' + escapeAttr(id) + '" type="text" data-personal="' + key + '" value="' + escapeAttr(value || "") + '"></div>';
+      }
+
+      function trackerField(row, label, key, type) {
+        var id = "tracker-" + row.id + "-" + key;
+        return '<div class="field"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><input id="' + escapeAttr(id) + '" type="' + (type || "text") + '" data-tracker-id="' + row.id + '" data-tracker-field="' + key + '" value="' + escapeAttr(row[key] || "") + '"></div>';
+      }
+
+      function trackerArea(row, label, key) {
+        var id = "tracker-" + row.id + "-" + key;
+        return '<div class="field wide"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><textarea id="' + escapeAttr(id) + '" data-tracker-id="' + row.id + '" data-tracker-field="' + key + '">' + escapeHtml(row[key] || "") + '</textarea></div>';
+      }
+
+      function trackerSelect(row, label, key, options) {
+        var id = "tracker-" + row.id + "-" + key;
+        return '<div class="field"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><select id="' + escapeAttr(id) + '" data-tracker-id="' + row.id + '" data-tracker-field="' + key + '">' + options.map(function (option) {
+          return '<option value="' + escapeAttr(option) + '" ' + selected(row[key] === option) + '>' + escapeHtml(option) + '</option>';
+        }).join("") + '</select></div>';
+      }
+
+      function analysisField(item, label, key) {
+        var id = "analysis-" + item.id + "-" + key;
+        return '<div class="field"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><input id="' + escapeAttr(id) + '" type="text" data-analysis-id="' + item.id + '" data-analysis-field="' + key + '" value="' + escapeAttr(item[key] || "") + '"></div>';
+      }
+
+      function analysisArea(item, label, key) {
+        var id = "analysis-" + item.id + "-" + key;
+        return '<div class="field wide"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><textarea id="' + escapeAttr(id) + '" data-analysis-id="' + item.id + '" data-analysis-field="' + key + '">' + escapeHtml(item[key] || "") + '</textarea></div>';
+      }
+
+      function analysisSelect(item, label, key, options) {
+        var id = "analysis-" + item.id + "-" + key;
+        return '<div class="field"><label for="' + escapeAttr(id) + '">' + escapeHtml(label) + '</label><select id="' + escapeAttr(id) + '" data-analysis-id="' + item.id + '" data-analysis-field="' + key + '">' + options.map(function (option) {
+          var optionLabel = key === "mainReason" ? labelForWrong(option) : option;
+          return '<option value="' + escapeAttr(option) + '" ' + selected(item[key] === option) + '>' + escapeHtml(optionLabel) + '</option>';
+        }).join("") + '</select></div>';
+      }
+
+      function fact(label, value) {
+        return '<div class="fact"><span>' + escapeHtml(label) + '</span><strong>' + escapeHtml(value || "Not set") + '</strong></div>';
+      }
+
+      function renderWarnings(warnings) {
+        return '<div class="warning-list" style="margin-top:14px"><strong>Review before generating:</strong><ul>' + warnings.map(function (warning) {
+          return '<li>' + escapeHtml(warning) + '</li>';
+        }).join("") + '</ul></div>';
+      }
+
+      function goHome() {
+        state.screen = "home";
+        saveState();
+      }
+
+      function setScreen(screen) {
+        state.screen = screen;
+        saveState();
+      }
+
+      function startNewLetter() {
+        state.draft = createEmptyDraft();
+        state.currentLetter = null;
+        state.step = 1;
+        state.screen = "wizard";
+        statusMessage = "Started a new guided letter.";
+        saveState();
+      }
+
+      function openAnalyzer() {
+        state.screen = "analyze";
+        statusMessage = "Paste report text or upload a PDF or text file. The raw report text stays in this browser session.";
+        saveState();
+      }
+
+      function defaultPdfUploadState() {
+        return {
+          fileName: "",
+          status: "No file selected yet.",
+          pageStatus: "",
+          pageCount: 0,
+          characterCount: 0,
+          preview: "",
+          error: "",
+          pdfJsLoaded: Boolean(window.pdfjsLib),
+          workerPath: PDF_WORKER_PATH,
+          workerLoaded: Boolean(window.pdfjsWorker && window.pdfjsWorker.WorkerMessageHandler),
+          history: []
+        };
+      }
+
+      function setPdfStatus(message) {
+        pdfUploadState.status = message;
+        pdfUploadState.history = pdfUploadState.history || [];
+        if (/^Extracting text from page /i.test(message)) {
+          pdfUploadState.history = pdfUploadState.history.filter(function (item) {
+            return !/^Extracting text from page /i.test(item);
+          });
+        }
+        if (pdfUploadState.history[pdfUploadState.history.length - 1] !== message) {
+          pdfUploadState.history.push(message);
+        }
+      }
+
+      function analyzePastedText() {
+        pdfUploadState = defaultPdfUploadState();
+        setPdfStatus("Analyzing pasted text.");
+        scanReportText({ source: "paste" });
+      }
+
+      function scanReportText(options) {
+        options = options || {};
+        var text = reportTextDraft || "";
+        if (!text.trim()) {
+          statusMessage = "Paste credit report text first, then scan.";
+          return;
+        }
+        var safeText = stripSensitiveText(text);
+        pdfUploadState.characterCount = safeText.length;
+        pdfUploadState.preview = safeText.slice(0, 1600);
+        var result = analyzeReportText(text);
+        if (result.fullSsnDetected) {
+          reportTextDraft = safeText;
+        }
+        state.analyzer.items = result.items;
+        state.analyzer.lastAnalyzedAt = new Date().toISOString();
+        state.analyzer.summary = {
+          itemCount: result.items.length,
+          fullSsnDetected: result.fullSsnDetected
+        };
+        state.analyzer.fullSsnWarning = result.fullSsnDetected
+          ? "A full SSN pattern was detected in the report text. The app will not include full SSNs in extracted accounts or letters. Remove full SSNs from notes before generating letters."
+          : "";
+        if (options.source === "pdf") {
+          setPdfStatus("Report text extracted.");
+          statusMessage = result.items.length
+            ? "Report text extracted. Review detected items below."
+            : "Report text extracted. No account cards were detected, so review the extracted text preview below.";
+        } else {
+          statusMessage = result.items.length
+            ? "Report scan found " + result.items.length + " possible account item" + (result.items.length === 1 ? "" : "s") + ". Review before creating letters."
+            : "No account-like items were detected. Try pasting more complete report text with account names, balances, statuses, and dates.";
+        }
+        saveState();
+      }
+
+      function handleReportFileChange(input) {
+        var file = input && input.files && input.files[0];
+        if (!file) {
+          pdfUploadState = defaultPdfUploadState();
+          setPdfStatus("No file selected yet.");
+          statusMessage = "No file selected yet.";
+          render();
+          return;
+        }
+        readReportFile(file);
+      }
+
+      function readReportFile(file) {
+        if (!file) {
+          pdfUploadState = defaultPdfUploadState();
+          setPdfStatus("No file selected yet.");
+          statusMessage = "No file selected yet.";
+          return;
+        }
+        var name = (file.name || "").toLowerCase();
+        pdfUploadState = defaultPdfUploadState();
+        pdfUploadState.fileName = file.name || "selected file";
+        pdfUploadState.history = [];
+        setPdfStatus("Selected file: " + pdfUploadState.fileName);
+        statusMessage = "Selected file: " + pdfUploadState.fileName;
+
+        if (!/\.pdf$/i.test(name) && file.type !== "application/pdf") {
+          pdfUploadState.error = "This is not a PDF file. Choose a PDF credit report or paste report text below.";
+          statusMessage = "This is not a PDF file. Choose a PDF credit report.";
+          render();
+          return;
+        }
+
+        if (isFileMode()) {
+          setPdfStatus("PDF upload requires the hosted online version.");
+          pdfUploadState.workerLoaded = false;
+          pdfUploadState.error = "PDF upload cannot run reliably when this app is opened from a local file because browser security blocks the PDF.js worker. Open the GitHub Pages https:// link for ABK Credit Management Online, then upload the PDF there. Your report will still be processed locally in your browser and will not be uploaded to a server.";
+          statusMessage = "Open the GitHub Pages https:// link to use PDF upload. Manual letter creation still works here.";
+          render();
+          return;
+        }
+
+        setPdfStatus("Reading PDF...");
+        statusMessage = "Reading PDF...";
+        var readPromise = readFileAsArrayBuffer(file);
+        render();
+        readPromise.then(function (buffer) {
+          setPdfStatus("PDF loaded.");
+          statusMessage = "PDF loaded.";
+          render();
+          return extractPdfText(buffer);
+        }).then(function (result) {
+            reportTextDraft = stripSensitiveText(result.text);
+            pdfUploadState.pageCount = result.pageCount;
+            pdfUploadState.characterCount = reportTextDraft.length;
+            pdfUploadState.preview = reportTextDraft.slice(0, 1600);
+            pdfUploadState.pageStatus = "";
+            pdfUploadState.error = "";
+            scanReportText({ source: "pdf" });
+            render();
+          }).catch(function (error) {
+            var message = error && error.message ? error.message : "PDF text unavailable.";
+            if (/PDF reader setup failed|PDF worker|worker file|WorkerMessageHandler|Failed to resolve module specifier|Could not load.*worker|Failed to fetch dynamically imported module|Cross-origin script load denied|Cross-Origin Resource Sharing/i.test(message)) {
+              setPdfStatus("PDF reader setup failed.");
+              pdfUploadState.workerLoaded = false;
+              pdfUploadState.error = "PDF reader setup failed. If the worker path starts with file://, you are opening a local file instead of the hosted online app. Open the GitHub Pages https:// link for PDF upload. Details: " + message;
+              statusMessage = "PDF reader setup failed.";
+            } else if (/PDF reader failed|Could not load|local PDF reader|pdf\\.min/i.test(message)) {
+              setPdfStatus("PDF reader failed to load.");
+              pdfUploadState.pdfJsLoaded = false;
+              pdfUploadState.error = "PDF analysis requires the local PDF.js files or internet if using CDN. Keep ABK Credit Management.html with ./libs/pdf.min.js and ./libs/pdf.worker.min.js. Manual letter creation still works offline. Details: " + message;
+              statusMessage = "PDF reader failed to load.";
+            } else {
+              setPdfStatus("No readable text found.");
+              pdfUploadState.error = "This PDF may be scanned, image-based, locked, or password-protected. Details: " + message + " Use manual entry or paste report text instead.";
+              statusMessage = "No readable text found.";
+            }
+            render();
+          });
+      }
+
+      function readFileAsArrayBuffer(file) {
+        if (file.arrayBuffer) return file.arrayBuffer();
+        return new Promise(function (resolve, reject) {
+          var reader = new FileReader();
+          reader.onload = function () { resolve(reader.result); };
+          reader.onerror = function () { reject(new Error("The selected file could not be read.")); };
+          reader.readAsArrayBuffer(file);
+        });
+      }
+
+      function loadPdfJs() {
+        if (window.pdfjsLib) {
+          pdfUploadState.pdfJsLoaded = true;
+          return Promise.resolve(window.pdfjsLib);
+        }
+        if (pdfJsLoadPromise) return pdfJsLoadPromise;
+        pdfJsLoadPromise = loadScript(PDF_JS_PATH).then(function () {
+          if (!window.pdfjsLib) {
+            throw new Error("PDF reader failed to load.");
+          }
+          pdfUploadState.pdfJsLoaded = true;
+          return window.pdfjsLib;
+        }).catch(function (error) {
+          pdfJsLoadPromise = null;
+          pdfUploadState.pdfJsLoaded = false;
+          throw new Error("PDF reader failed to load. " + (error && error.message ? error.message : "PDF analysis requires the local PDF.js files or internet if using CDN."));
+        });
+        return pdfJsLoadPromise;
+      }
+
+      function setupPdfWorker(pdfjsLib) {
+        var workerUrl = resolveAppPath(PDF_WORKER_PATH);
+        pdfUploadState.workerPath = workerUrl;
+        if (pdfjsLib.GlobalWorkerOptions) {
+          pdfjsLib.GlobalWorkerOptions.workerSrc = workerUrl;
+        }
+        if (window.pdfjsWorker && window.pdfjsWorker.WorkerMessageHandler) {
+          pdfUploadState.workerLoaded = true;
+          return Promise.resolve(pdfjsLib);
+        }
+        if (pdfWorkerLoadPromise) {
+          return pdfWorkerLoadPromise.then(function () { return pdfjsLib; });
+        }
+        setPdfStatus("Loading PDF worker...");
+        render();
+        pdfWorkerLoadPromise = import(workerUrl).then(function (module) {
+          if (module && module.WorkerMessageHandler && !window.pdfjsWorker) {
+            window.pdfjsWorker = { WorkerMessageHandler: module.WorkerMessageHandler };
+          }
+          return confirmPdfWorkerLoaded(workerUrl, pdfjsLib);
+        }).catch(function (moduleError) {
+          return loadModuleScript(workerUrl).then(function () {
+            return confirmPdfWorkerLoaded(workerUrl, pdfjsLib);
+          }).catch(function (scriptError) {
+            pdfWorkerLoadPromise = null;
+            pdfUploadState.workerLoaded = false;
+            throw new Error(
+              "PDF reader setup failed. The app could not load the PDF worker file at " + workerUrl + ". " +
+              "Module setup error: " + (moduleError && moduleError.message ? moduleError.message : "PDF worker module failed.") + " " +
+              "Script fallback error: " + (scriptError && scriptError.message ? scriptError.message : "PDF worker script failed.")
+            );
+          });
+        });
+        return pdfWorkerLoadPromise.then(function () { return pdfjsLib; });
+      }
+
+      function confirmPdfWorkerLoaded(workerUrl, pdfjsLib) {
+        if (!window.pdfjsWorker || !window.pdfjsWorker.WorkerMessageHandler) {
+          throw new Error("PDF worker file loaded, but WorkerMessageHandler was not available at " + workerUrl + ".");
+        }
+        pdfUploadState.workerLoaded = true;
+        setPdfStatus("PDF worker loaded.");
+        return pdfjsLib;
+      }
+
+      function resolveAppPath(path) {
+        try {
+          return new URL(path, window.location.href).href;
+        } catch (error) {
+          return path;
+        }
+      }
+
+      function isFileMode() {
+        return /^file:/i.test(window.location.protocol || window.location.href || "");
+      }
+
+      function loadScript(src) {
+        return new Promise(function (resolve, reject) {
+          var script = document.createElement("script");
+          script.src = src;
+          script.onload = resolve;
+          script.onerror = function () {
+            reject(new Error("Could not load " + src + "."));
+          };
+          document.head.appendChild(script);
+        });
+      }
+
+      function loadModuleScript(src) {
+        return new Promise(function (resolve, reject) {
+          var script = document.createElement("script");
+          script.type = "module";
+          script.src = src;
+          script.onload = resolve;
+          script.onerror = function () {
+            reject(new Error("Could not load " + src + "."));
+          };
+          document.head.appendChild(script);
+        });
+      }
+
+      function extractPdfText(buffer) {
+        return loadPdfJs().then(function (pdfjsLib) {
+          return setupPdfWorker(pdfjsLib);
+        }).then(function (pdfjsLib) {
+          return pdfjsLib.getDocument({
+            data: new Uint8Array(buffer),
+            disableWorker: true
+          }).promise;
+        }).then(function (pdf) {
+          pdfUploadState.pageCount = pdf.numPages || 0;
+          var pages = [];
+          var chain = Promise.resolve();
+          for (var pageNumber = 1; pageNumber <= pdf.numPages; pageNumber += 1) {
+            chain = chain.then(extractPdfPage.bind(null, pdf, pageNumber, pdf.numPages, pages));
+          }
+          return chain.then(function () {
+            var text = pages.join("\n\n");
+            if (!text.trim()) {
+              throw new Error("No readable text found. This PDF may be scanned, image-based, locked, or password-protected.");
+            }
+            return {
+              text: text,
+              pageCount: pdf.numPages
+            };
+          });
+        });
+      }
+
+      function extractPdfPage(pdf, pageNumber, totalPages, pages) {
+        pdfUploadState.pageStatus = "Extracting text from page " + pageNumber + " of " + totalPages + "...";
+        setPdfStatus(pdfUploadState.pageStatus);
+        statusMessage = pdfUploadState.pageStatus;
+        render();
+        return pdf.getPage(pageNumber).then(function (page) {
+          return page.getTextContent();
+        }).then(function (content) {
+          pages[pageNumber - 1] = content.items.map(function (item) { return item.str || ""; }).join(" ");
+        });
+      }
+
+      function updateAnalysisItem(id, key, value) {
+        var item = findAnalysisItem(id);
+        if (!item) return;
+        item[key] = key === "selected" ? Boolean(value) : stripSensitiveText(value);
+        item.updatedAt = new Date().toISOString();
+        saveState();
+      }
+
+      function createLetterFromAnalysis(id) {
+        var item = findAnalysisItem(id);
+        if (!item) return;
+        state.draft = draftFromAnalysisItem(item);
+        state.currentLetter = null;
+        state.step = 4;
+        state.screen = "wizard";
+        statusMessage = "The wizard was auto-filled from the extracted account. Review and edit before generating the letter.";
+        saveState();
+      }
+
+      function bulkCreateAnalysisLetters() {
+        var selectedItems = (state.analyzer.items || []).filter(function (item) { return item.selected; });
+        if (!selectedItems.length) {
+          statusMessage = "Select at least one extracted item first.";
+          return;
+        }
+        var created = 0;
+        selectedItems.forEach(function (item) {
+          var draft = draftFromAnalysisItem(item);
+          var recommendation = recommendLetter(draft);
+          var blockers = validationMessages(draft, recommendation).filter(function (message) { return /^Stop:/.test(message); });
+          if (blockers.length) return;
+          var letter = {
+            id: createId(),
+            disputeId: draft.id,
+            accountName: draft.accountName,
+            recipient: draft.recipient,
+            letterType: recommendation.type,
+            createdAt: new Date().toISOString(),
+            body: buildLetter(draft, recommendation)
+          };
+          draft.letterType = letter.letterType;
+          draft.letterBody = letter.body;
+          draft.status = "Draft generated";
+          upsertDisputeRecord(draft);
+          upsertLetterRecord(letter);
+          upsertTracker(draft, letter);
+          created += 1;
+        });
+        statusMessage = created
+          ? "Created and saved " + created + " separate dispute letter" + (created === 1 ? "" : "s") + " from selected report items."
+          : "No letters were created. Check that selected items have a factual issue and do not contain unsafe text.";
+        saveState();
+      }
+
+      function exportAnalysisJson() {
+        var data = JSON.stringify({
+          exportedAt: new Date().toISOString(),
+          summary: state.analyzer.summary || {},
+          items: state.analyzer.items || []
+        }, null, 2);
+        var blob = new Blob([data], { type: "application/json" });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = "credit-report-analysis-" + isoDate() + ".json";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        statusMessage = "Analysis JSON export started.";
+      }
+
+      function printAnalysisSummary() {
+        var items = state.analyzer.items || [];
+        printArea.textContent = analysisSummaryText(items);
+        window.print();
+        statusMessage = "Printable analysis summary opened.";
+      }
+
+      function exportBackup() {
+        var backup = {
+          appName: APP_NAME,
+          appVersion: APP_VERSION,
+          storageKey: STORAGE_KEY,
+          exportedAt: new Date().toISOString(),
+          state: state
+        };
+        var blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+        var url = URL.createObjectURL(blob);
+        var link = document.createElement("a");
+        link.href = url;
+        link.download = "ABK Credit Management Backup " + isoDate() + ".json";
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+        statusMessage = "Backup export started. Keep that file somewhere safe before updating the app.";
+      }
+
+      function importBackupFile(file) {
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function () {
+          try {
+            var parsed = JSON.parse(String(reader.result || ""));
+            var importedState = parsed && parsed.state ? parsed.state : parsed;
+            var normalized = normalizeState(importedState);
+            state = normalized;
+            saveState();
+            statusMessage = "Backup imported. Saved disputes, letters, tracker records, personal info, and extracted summaries were restored locally.";
+            render();
+          } catch (error) {
+            statusMessage = "That backup file could not be imported. Choose a JSON backup exported from ABK Credit Management.";
+            render();
+          }
+        };
+        reader.onerror = function () {
+          statusMessage = "The backup file could not be read.";
+          render();
+        };
+        reader.readAsText(file);
+      }
+
+      function nextStep() {
+        if (state.step < 5) state.step += 1;
+        saveState();
+      }
+
+      function previousStep() {
+        if (state.step > 1) state.step -= 1;
+        saveState();
+      }
+
+      function setDraftField(key, value) {
+        state.draft[key] = value;
+        state.draft.updatedAt = new Date().toISOString();
+        saveState();
+      }
+
+      function generateLetter() {
+        var recommendation = recommendLetter(state.draft);
+        var warnings = validationMessages(state.draft, recommendation);
+        var blockers = warnings.filter(function (message) {
+          return /^Stop:/.test(message);
+        });
+
+        if (blockers.length) {
+          statusMessage = blockers[0].replace(/^Stop:\s*/, "");
+          state.step = 5;
+          saveState();
+          return;
+        }
+
+        var letter = {
+          id: createId(),
+          disputeId: state.draft.id,
+          accountName: state.draft.accountName,
+          recipient: state.draft.recipient,
+          letterType: recommendation.type,
+          createdAt: new Date().toISOString(),
+          body: buildLetter(state.draft, recommendation)
+        };
+
+        state.currentLetter = letter;
+        state.screen = "preview";
+        statusMessage = "Letter generated. Review and edit before printing or saving.";
+        saveState();
+      }
+
+      function saveDispute() {
+        if (!state.currentLetter) return;
+        var dispute = copyDraft(state.draft);
+        dispute.letterType = state.currentLetter.letterType;
+        dispute.letterBody = state.currentLetter.body;
+        dispute.status = "Draft generated";
+        dispute.updatedAt = new Date().toISOString();
+
+        upsertDisputeRecord(dispute);
+        upsertLetterRecord(state.currentLetter);
+        upsertTracker(dispute, state.currentLetter);
+        statusMessage = "Dispute saved locally and tracker entry updated.";
+        saveState();
+      }
+
+      function upsertDisputeRecord(dispute) {
+        var existingIndex = state.disputes.findIndex(function (item) { return item.id === dispute.id; });
+        if (existingIndex >= 0) state.disputes[existingIndex] = dispute;
+        else state.disputes.unshift(dispute);
+      }
+
+      function upsertLetterRecord(letter) {
+        var letterIndex = state.letters.findIndex(function (item) { return item.disputeId === letter.disputeId; });
+        if (letterIndex >= 0) state.letters[letterIndex] = letter;
+        else state.letters.unshift(letter);
+      }
+
+      function printLetter() {
+        if (!state.currentLetter) return;
+        printArea.textContent = state.currentLetter.body;
+        window.print();
+        statusMessage = "Print window opened.";
+      }
+
+      function copyLetter() {
+        if (!state.currentLetter) return;
+        var text = state.currentLetter.body;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () {
+            statusMessage = "Letter copied to the clipboard.";
+            render();
+          }).catch(function () {
+            fallbackCopy(text);
+          });
+        } else {
+          fallbackCopy(text);
+        }
+      }
+
+      function fallbackCopy(text) {
+        var temp = document.createElement("textarea");
+        temp.value = text;
+        document.body.appendChild(temp);
+        temp.select();
+        try {
+          document.execCommand("copy");
+          statusMessage = "Letter copied to the clipboard.";
+        } catch (error) {
+          statusMessage = "Copy was blocked by the browser. Select the letter text and copy it manually.";
+        }
+        temp.remove();
+      }
+
+      function openDispute(id) {
+        var dispute = findDispute(id);
+        if (!dispute) return;
+        state.draft = copyDraft(dispute);
+        state.currentLetter = {
+          id: createId(),
+          disputeId: dispute.id,
+          accountName: dispute.accountName,
+          recipient: dispute.recipient,
+          letterType: dispute.letterType || recommendLetter(dispute).type,
+          createdAt: new Date().toISOString(),
+          body: dispute.letterBody || buildLetter(dispute, recommendLetter(dispute))
+        };
+        state.screen = "preview";
+        statusMessage = "Opened saved dispute.";
+        saveState();
+      }
+
+      function editDispute(id) {
+        var dispute = findDispute(id);
+        if (!dispute) return;
+        state.draft = copyDraft(dispute);
+        state.step = 4;
+        state.screen = "wizard";
+        statusMessage = "Opened saved dispute for editing.";
+        saveState();
+      }
+
+      function deleteDispute(id) {
+        if (!window.confirm("Delete this saved dispute and its tracker entry?")) return;
+        state.disputes = state.disputes.filter(function (item) { return item.id !== id; });
+        state.letters = state.letters.filter(function (item) { return item.disputeId !== id; });
+        state.tracker = state.tracker.filter(function (item) { return item.disputeId !== id; });
+        statusMessage = "Saved dispute deleted.";
+        saveState();
+      }
+
+      function deleteTracker(id) {
+        state.tracker = state.tracker.filter(function (row) { return row.id !== id; });
+        statusMessage = "Tracker entry deleted.";
+        saveState();
+      }
+
+      function resetLocalData() {
+        if (!window.confirm("Clear all locally saved disputes, letters, tracker entries, and personal information from this browser?")) return;
+        window.localStorage.removeItem(STORAGE_KEY);
+        state = defaultState();
+        statusMessage = "Local app data has been reset.";
+      }
+
+      function updateTrackerField(row, key, value) {
+        row[key] = value;
+        if (key === "dateMailed" && value) {
+          row.responseDeadline = addDays(value, 30);
+          row.followUpDate = addDays(value, 30);
+          row.extendedDeadline = addDays(value, 45);
+        }
+        saveState();
+      }
+
+      function upsertTracker(dispute, letter) {
+        var existing = state.tracker.find(function (row) { return row.disputeId === dispute.id; });
+        var deadlineBase = existing && existing.dateMailed ? existing.dateMailed : isoDate();
+        var nextAction = nextActionFor(letter.letterType);
+        if (existing) {
+          existing.accountName = dispute.accountName || "Untitled account";
+          existing.recipient = dispute.recipient;
+          existing.letterType = letter.letterType;
+          existing.nextAction = existing.nextAction || nextAction;
+          existing.responseDeadline = existing.responseDeadline || addDays(deadlineBase, 30);
+          existing.followUpDate = existing.followUpDate || addDays(deadlineBase, 30);
+          existing.extendedDeadline = existing.extendedDeadline || addDays(deadlineBase, 45);
+          return;
+        }
+        state.tracker.unshift({
+          id: createId(),
+          disputeId: dispute.id,
+          accountName: dispute.accountName || "Untitled account",
+          recipient: dispute.recipient,
+          letterType: letter.letterType,
+          dateMailed: "",
+          trackingNumber: dispute.advanced.certifiedMailNumber || "",
+          responseDeadline: addDays(deadlineBase, 30),
+          followUpDate: addDays(deadlineBase, 30),
+          extendedDeadline: addDays(deadlineBase, 45),
+          responseReceived: "No response yet",
+          result: "Pending",
+          nextAction: nextAction
+        });
+      }
+
+      function recommendLetter(draft) {
+        var hasFacts = hasFactualReason(draft);
+        var notes = [draft.explanation, draft.advanced.extraNotes].join(" ");
+        var noResponse = /no response|never responded|ignored|did not respond|no timely response/i.test(notes);
+        var verifiedResponse = /verified|previously verified|generic response|incomplete response|method of verification/i.test(notes);
+        var hasPrior = Boolean(draft.advanced.previousDisputeDate || /prior dispute|previous dispute|previously disputed|prior response|previous response/i.test(notes) || noResponse || verifiedResponse);
+        var wantsValidation = draft.wrongs.indexOf("not_validated") >= 0 || draft.wrongs.indexOf("no_authority") >= 0 || draft.desiredResult === "Validate";
+
+        if (!hasFacts && draft.itemKind === "Late payment") {
+          return {
+            type: "Goodwill letter clearly labeled as not a legal dispute",
+            reason: "No factual dispute reason is selected, so the app treats this as a goodwill request rather than a legal dispute."
+          };
+        }
+
+        if (hasPrior && noResponse) {
+          return {
+            type: "No-response follow-up letter",
+            reason: "A prior dispute or certified mailing is listed and the notes indicate no meaningful response."
+          };
+        }
+
+        if (hasPrior && (draft.desiredResult === "Investigate" || verifiedResponse)) {
+          return {
+            type: "Reinvestigation / method-of-verification style letter",
+            reason: "A prior dispute exists and the requested result is a deeper investigation of how the item was verified."
+          };
+        }
+
+        if (hasPrior) {
+          return {
+            type: "Follow-up after verified response",
+            reason: "A prior dispute date or certified mail number is listed, so the letter asks for a targeted follow-up review."
+          };
+        }
+
+        if (draft.recipient === "Collection agency") {
+          return {
+            type: "Collection agency debt validation letter",
+            reason: wantsValidation
+              ? "The recipient is a collection agency and the answers focus on validation or collection authority."
+              : "The recipient is a collection agency, so the letter requests validation and support for the alleged debt."
+          };
+        }
+
+        if (draft.recipient === "Original creditor / furnisher") {
+          return {
+            type: "Direct furnisher dispute letter",
+            reason: "The letter is going directly to the company furnishing or maintaining the account information."
+          };
+        }
+
+        return {
+          type: "Credit bureau dispute letter",
+          reason: "The recipient is a credit bureau and the answers identify factual reporting problems."
+        };
+      }
+
+      function validationMessages(draft, recommendation) {
+        var messages = [];
+        var combinedText = [draft.accountNumber, draft.explanation, draft.advanced.extraNotes].join(" ");
+        var scoreOnly = scoreOnlyPatterns.some(function (pattern) { return pattern.test(combinedText); });
+        var admission = admissionPatterns.some(function (pattern) { return pattern.test(combinedText); });
+        var ssn = /\b\d{3}[- ]?\d{2}[- ]?\d{4}\b/.test(combinedText);
+        var noFacts = !hasFactualReason(draft);
+        var goodwill = recommendation.type.indexOf("Goodwill") === 0;
+
+        if (noFacts && !goodwill) {
+          messages.push("Stop: Select at least one factual issue before generating a legal dispute letter. Accurate negative information generally should not be disputed only because it hurts your score.");
+        }
+        if (noFacts && goodwill) {
+          messages.push("No factual dispute reason is selected. This output will be a goodwill request, clearly labeled as not a legal dispute.");
+        }
+        if (scoreOnly && !hasFactualReason(draft)) {
+          messages.push("Stop: Do not dispute an account only because it is negative or hurts your score. Add a truthful factual error first.");
+        } else if (scoreOnly) {
+          messages.push("Score impact alone is not a dispute reason. The letter will focus only on the factual issues selected.");
+        }
+        if (admission) {
+          messages.push("Stop: Remove any wording that admits liability, promises payment, or proposes a payment arrangement.");
+        }
+        if (ssn) {
+          messages.push("Stop: Remove the full SSN. Use only last four digits if a partial identifier is needed.");
+        }
+        if (/identity theft|fraud/i.test(combinedText)) {
+          messages.push("This app does not generate identity theft or fraud claims. Keep the letter limited to truthful, documented reporting issues.");
+        }
+        return unique(messages);
+      }
+
+      function buildLetter(draft, recommendation) {
+        if (recommendation.type.indexOf("Goodwill") === 0) return buildGoodwillLetter(draft, recommendation);
+
+        var date = new Date().toLocaleDateString();
+        var requestedResult = resultSentence(draft.desiredResult);
+        var parts = [
+          "Date: " + date,
+          "",
+          "Consumer:",
+          senderBlock(),
+          "",
+          "Recipient:",
+          recipientAddressBlock(draft),
+          "",
+          certifiedMailLine(draft),
+          "Subject: " + recommendation.type + " - " + accountReference(draft),
+          "Account Reference: " + accountReference(draft),
+          "",
+          "To Whom It May Concern:",
+          "",
+          "Dispute Statement",
+          openingParagraph(draft, recommendation),
+          "",
+          "Account Reference",
+          "- Item type: " + (draft.itemKind || "Not provided"),
+          "- Account / company: " + (draft.accountName || "Not provided"),
+          "- Account number or partial reference: " + accountReference(draft),
+          "- Claimed balance: " + (draft.claimedBalance || "Not provided"),
+          "- Original creditor: " + (draft.originalCreditor || "Not provided"),
+          "- Current creditor: " + (draft.advanced.currentCreditor || "Not provided"),
+          "- Credit bureau reporting it: " + (draft.bureau || "Not provided"),
+          "",
+          advancedFacts(draft),
+          "",
+          "Specific Disputed Information",
+          issueBlock(draft),
+          "",
+          "Short explanation:",
+          draft.explanation || "Add a short factual explanation before sending this letter.",
+          "",
+          "Legal Basis",
+          legalBasisBlock(draft, recommendation),
+          "",
+          requestBlock(draft, recommendation, requestedResult),
+          "",
+          documentsBlock(draft),
+          "",
+          nonAdmissionBlock(draft, recommendation),
+          "",
+          writtenResultsBlock(draft, recommendation),
+          "",
+          "Sincerely,",
+          "",
+          "",
+          state.personal.fullName || "Signature"
+        ];
+
+        return parts.filter(function (line) { return line !== null && line !== undefined && line !== ""; }).join("\n");
+      }
+
+      function buildGoodwillLetter(draft, recommendation) {
+        return [
+          "Date: " + new Date().toLocaleDateString(),
+          "",
+          "Consumer:",
+          senderBlock(),
+          "",
+          "Recipient:",
+          recipientAddressBlock(draft),
+          "",
+          certifiedMailLine(draft),
+          "Subject: Goodwill request - not a legal dispute - " + accountReference(draft),
+          "Account Reference: " + accountReference(draft),
+          "",
+          "To Whom It May Concern:",
+          "",
+          "Dispute Statement",
+          "This is a goodwill request only. I am not claiming in this letter that accurate information is legally inaccurate, and this letter should not be treated as a formal credit reporting dispute.",
+          "",
+          "I am respectfully asking that you review the account below and consider a discretionary goodwill adjustment if your policies allow it.",
+          "",
+          "Account Reference",
+          "- Item type: " + (draft.itemKind || "Late payment"),
+          "- Account / company: " + (draft.accountName || "Not provided"),
+          "- Account number or partial reference: " + accountReference(draft),
+          "- Credit bureau reporting it: " + (draft.bureau || "Not provided"),
+          "",
+          "Explanation:",
+          draft.explanation || "Add a short explanation before sending this goodwill request.",
+          "",
+          "Requested action:",
+          "- Please consider a goodwill adjustment or courtesy update based on the account history and the facts provided.",
+          "- I understand that accurate information may remain on a consumer report and that this request does not require you to make any change.",
+          "",
+          documentsBlock(draft),
+          "",
+          "Non-Admission / Rights Reservation",
+          "This goodwill request is not an admission of liability, a promise to pay, or a waiver of any rights, claims, defenses, or limitations periods.",
+          "",
+          "Request for Written Results",
+          "Please send your decision in writing to the mailing address listed above.",
+          "",
+          "Sincerely,",
+          "",
+          "",
+          state.personal.fullName || "Signature"
+        ].join("\n");
+      }
+
+      function certifiedMailLine(draft) {
+        return draft.advanced.certifiedMailNumber ? "Sent via Certified Mail: " + draft.advanced.certifiedMailNumber : "";
+      }
+
+      function legalBasisBlock(draft, recommendation) {
+        if (recommendation.type === "Collection agency debt validation letter") {
+          return "Legal Basis: This request concerns debt validation rights under the Fair Debt Collection Practices Act and applicable debt collection regulations. Please provide validation information for the alleged debt, including the current creditor, the original creditor if different, the amount claimed, an itemization if available, documentation showing authority to collect, and documentation connecting me to the alleged debt.";
+        }
+
+        if (recommendation.type === "Direct furnisher dispute letter" || draft.recipient === "Original creditor / furnisher") {
+          return "Legal Basis: This is a direct dispute regarding information your company furnished to one or more consumer reporting agencies. Please conduct a reasonable investigation of each disputed data point, including liability, balance, account status, payment history, dates, and any other information bearing on creditworthiness. Correct or delete any information that cannot be verified as accurate, complete, and properly attributable to me.";
+        }
+
+        return "Legal Basis: This dispute concerns the accuracy, completeness, and verifiability of information appearing in my consumer report. Under the Fair Credit Reporting Act, please conduct a reasonable reinvestigation and delete or correct any information that cannot be verified as accurate and complete. This reporting may implicate your duties under applicable consumer credit reporting laws if it cannot be verified as accurate and complete.";
+      }
+
+      function nonAdmissionBlock(draft, recommendation) {
+        if (recommendation.type === "Collection agency debt validation letter") {
+          return [
+            "Non-Admission / Rights Reservation",
+            "This letter is not an admission of liability, a promise to pay, or a waiver of any rights, claims, defenses, or limitations periods."
+          ].join("\n");
+        }
+
+        return [
+          "Non-Admission / Rights Reservation",
+          "This letter is not an admission of liability, a promise to pay, or permission to re-age, duplicate, or otherwise change the account in a way that creates inaccurate reporting. I reserve all rights, claims, defenses, and remedies available under applicable law."
+        ].join("\n");
+      }
+
+      function writtenResultsBlock(draft, recommendation) {
+        var lines = [
+          "Request for Written Results",
+          "Please send written results of your investigation and confirmation of any correction, deletion, update, validation, or continued verification.",
+          "Failure to conduct a reasonable investigation and correct inaccurate or unverifiable information may raise compliance concerns under applicable law.",
+          "Please preserve all records used to verify the disputed information."
+        ];
+
+        if (draft.advanced.previousDisputeDate) {
+          lines.splice(2, 0, "Prior dispute date listed in my records: " + draft.advanced.previousDisputeDate + ".");
+        }
+        if (draft.advanced.certifiedMailNumber) {
+          lines.splice(2, 0, "Certified Mail Tracking Number listed in my records: " + draft.advanced.certifiedMailNumber + ".");
+        }
+        return lines.join("\n\n");
+      }
+
+      function openingParagraph(draft, recommendation) {
+        if (recommendation.type === "Collection agency debt validation letter") {
+          return "I dispute the alleged debt identified below to the extent it is being claimed, collected, or reported inaccurately, incompletely, without adequate validation, or without documented authority to collect. This letter is not an admission of liability, is not a promise to pay, and is not permission to re-age or alter the account in a way that creates inaccurate reporting.";
+        }
+        if (recommendation.type === "Direct furnisher dispute letter") {
+          return "I am submitting this direct dispute concerning information your company furnished or caused to be furnished to one or more consumer reporting agencies. Please conduct a reasonable investigation of each disputed data point using competent records rather than a conclusory or automated verification.";
+        }
+        if (recommendation.type === "Follow-up after verified response") {
+          return "This is a follow-up dispute because the prior response did not meaningfully address the specific factual issues identified below. Please conduct a targeted reinvestigation and address each disputed field directly.";
+        }
+        if (recommendation.type === "Reinvestigation / method-of-verification style letter") {
+          return "I am requesting a reinvestigation and a clear explanation of the method used to verify the disputed information. Please identify the source contacted, the date of contact, the records reviewed, and the procedure used to verify each disputed field.";
+        }
+        if (recommendation.type === "No-response follow-up letter") {
+          return "My records show that a prior dispute was sent, but I do not have a timely, meaningful response that resolves the specific factual issues below. Please correct or delete any information that cannot be verified as accurate, complete, current, and properly attributable to me.";
+        }
+        return "I am writing to dispute the accuracy, completeness, ownership, and verifiability of the information identified below. Please conduct a reasonable reinvestigation of each disputed data point and correct or delete anything that cannot be verified as accurate, complete, current, and properly attributable to me.";
+      }
+
+      function requestBlock(draft, recommendation, requestedResult) {
+        if (recommendation.type === "Collection agency debt validation letter") {
+          return [
+            "Requested action:",
+            "- Identify the current creditor and the original creditor if different.",
+            "- Provide the amount claimed and an itemization if available, including principal, interest, fees, payments, credits, assignments, or transfers.",
+            "- Provide documentation showing your authority to collect this alleged debt.",
+            "- Provide documentation connecting me to the alleged debt.",
+            "- If you cannot validate the alleged debt or verify the disputed reporting as accurate and complete, cease reporting it or correct/delete the disputed reporting and notify any consumer reporting agency to which you furnished it.",
+            "- Do not treat this letter as a payment promise, settlement offer, admission of liability, or waiver of any rights."
+          ].join("\n");
+        }
+        if (recommendation.type === "Direct furnisher dispute letter") {
+          return [
+            "Requested action:",
+            "- Investigate each disputed data field you furnished or caused to be furnished.",
+            "- Correct or delete inaccurate, incomplete, unverifiable, obsolete, duplicated, or improperly attributed reporting sent to all consumer reporting agencies.",
+            "- Provide written confirmation of the investigation results and identify any corrections transmitted to Experian, Equifax, TransUnion, or any other consumer reporting agency."
+          ].join("\n");
+        }
+        if (recommendation.type === "Reinvestigation / method-of-verification style letter") {
+          return [
+            "Requested action:",
+            "- Identify the source contacted, the date of contact, the documents reviewed, and the procedure used to verify each disputed field.",
+            "- Reinvestigate the disputed information using competent records rather than a generic automated verification.",
+            "- If the disputed information cannot be verified as accurate, complete, current, and properly attributable to me, delete or correct it and provide written confirmation."
+          ].join("\n");
+        }
+        if (recommendation.type === "No-response follow-up letter") {
+          return [
+            "Requested action:",
+            "- Correct or delete the disputed information because my records do not show a timely, meaningful response to the prior dispute.",
+            "- If you believe a timely response was sent, provide a copy of the response and proof of mailing.",
+            "- Send updated results in writing and notify every consumer reporting agency that received inaccurate information."
+          ].join("\n");
+        }
+        return [
+          "Requested action:",
+          "- " + requestedResult,
+          "- Review the enclosed supporting documents and investigate each disputed data field identified above.",
+          "- If any portion of the reporting is inaccurate, incomplete, unverifiable, obsolete, duplicated, inconsistent, or not properly attributable to me, please correct or delete it.",
+          "- Provide written investigation results and a clear description of any correction, deletion, update, or continued verification."
+        ].join("\n");
+      }
+
+      function issueBlock(draft) {
+        if (!draft.wrongs.length) return "Disputed issues:\n- No factual issue selected yet.";
+        return "Disputed issues:\n" + draft.wrongs.map(function (id) {
+          return "- " + issueSentence(id);
+        }).join("\n");
+      }
+
+      function issueSentence(id) {
+        var map = {
+          wrong_balance: "The balance being reported or claimed is inaccurate, inconsistent, or unsupported by the records available to me.",
+          not_mine: "The account is not properly attributable to me based on the information being reported.",
+          duplicate: "The same debt or account appears to be duplicated or reported more than once.",
+          wrong_dates: "One or more dates, including opening, closing, payment, delinquency, assignment, or reporting dates, appear inaccurate or inconsistent.",
+          wrong_original_creditor: "The original creditor is wrong, missing, incomplete, or not supported by the available account information.",
+          wrong_status: "The account status, payment status, collection status, charge-off status, or reporting status is inaccurate or incomplete.",
+          paid_wrong: "The account was paid or settled, but the reporting does not accurately reflect that status.",
+          not_validated: "The collector has not provided adequate validation of the alleged debt.",
+          no_authority: "The collector has not provided documentation showing authority to collect or report the alleged debt.",
+          bureau_mismatch: "The information differs across credit bureaus, which raises accuracy and completeness concerns.",
+          too_old: "The account appears too old to report or the reported dates do not support continued reporting.",
+          other_error: "There is another factual reporting error described in the explanation section."
+        };
+        return map[id] || id;
+      }
+
+      function advancedFacts(draft) {
+        var rows = [];
+        if (draft.advanced.dateOpened) rows.push("- Date opened: " + draft.advanced.dateOpened);
+        if (draft.advanced.dateClosed) rows.push("- Date closed: " + draft.advanced.dateClosed);
+        if (draft.advanced.dateFirstDelinquent) rows.push("- Date first delinquent: " + draft.advanced.dateFirstDelinquent);
+        if (draft.advanced.lastPaymentDate) rows.push("- Last payment date: " + draft.advanced.lastPaymentDate);
+        if (draft.advanced.previousDisputeDate) rows.push("- Prior dispute date: " + draft.advanced.previousDisputeDate);
+        if (draft.advanced.certifiedMailNumber) rows.push("- Certified Mail Tracking Number: " + draft.advanced.certifiedMailNumber);
+        if (draft.advanced.extraNotes) rows.push("- Additional notes: " + draft.advanced.extraNotes);
+        return rows.length ? "Additional details:\n" + rows.join("\n") : null;
+      }
+
+      function documentsBlock(draft) {
+        if (!draft.supportingDocs.length) return "Enclosures:\n- Add copies of documents that support the factual issue before mailing.";
+        return "Enclosures:\n" + draft.supportingDocs.map(function (doc) {
+          return "- " + enclosureLabel(doc);
+        }).join("\n");
+      }
+
+      function enclosureLabel(doc) {
+        var map = {
+          "Government ID copy": "Copy of identification",
+          "Payment receipt or settlement letter": "Payment or settlement proof",
+          "Bureau response": "Prior dispute response"
+        };
+        return map[doc] || doc;
+      }
+
+      function resultSentence(result) {
+        if (result === "Correct") return "Correct the inaccurate reporting after a reasonable investigation.";
+        if (result === "Delete") return "Delete any information that cannot be verified as accurate, complete, current, and properly attributable to me.";
+        if (result === "Validate") return "Provide validation and documentation supporting the reporting or collection claim.";
+        if (result === "Update") return "Update the reporting so it accurately reflects the correct account information.";
+        return "Investigate the disputed information and send written results explaining the outcome.";
+      }
+
+      function senderBlock() {
+        var lines = [
+          state.personal.fullName || "Your full name",
+          state.personal.mailingAddress || "Your mailing address",
+          state.personal.cityStateZip || "City, State ZIP"
+        ];
+        if (state.personal.contact) lines.push("Contact: " + state.personal.contact);
+        return lines.join("\n");
+      }
+
+      function recipientAddressBlock(draft) {
+        if (bureauRecipients[draft.recipient]) return bureauRecipients[draft.recipient];
+        if (draft.recipient === "Collection agency") return (draft.accountName || "Collection agency") + "\nMailing address to be added before sending";
+        return (draft.accountName || "Original creditor / furnisher") + "\nMailing address to be added before sending";
+      }
+
+      function accountReference(draft) {
+        return draft.accountNumber || "account reference not provided";
+      }
+
+      function hasFactualReason(draft) {
+        var explanation = (draft.explanation || "").trim();
+        var scoreOnly = scoreOnlyPatterns.some(function (pattern) { return pattern.test(explanation); });
+        return draft.wrongs.length > 0 || Boolean(explanation.length >= 12 && !scoreOnly);
+      }
+
+      function nextActionFor(letterType) {
+        if (letterType === "Collection agency debt validation letter") return "Mail the validation request, keep proof of mailing, and wait for a documented response.";
+        if (letterType === "Direct furnisher dispute letter") return "Mail the direct dispute and request written confirmation of any corrections.";
+        if (letterType === "Follow-up after verified response") return "Compare the next response against each disputed field and preserve all prior records.";
+        if (letterType === "Reinvestigation / method-of-verification style letter") return "Track the method-of-verification response and save all prior letters and responses.";
+        if (letterType === "No-response follow-up letter") return "Send the follow-up with proof of the prior mailing and calendar the next deadline.";
+        if (letterType.indexOf("Goodwill") === 0) return "Send only if the information is accurate and you are asking for discretionary goodwill.";
+        return "Mail the dispute with document copies, keep proof of mailing, and calendar the response deadline.";
+      }
+
+      function descriptionForItem(item) {
+        var map = {
+          "Collection account": "A collector or debt buyer is reporting or collecting.",
+          "Charge-off account": "A creditor charged off the account.",
+          "Late payment": "A late mark is being reported.",
+          "Account that is not mine": "Ownership or responsibility is disputed.",
+          "Paid or settled account reporting wrong": "Payment or settlement status is inaccurate.",
+          "Duplicate account": "The same account appears more than once.",
+          "Other credit report error": "Use for another factual reporting issue."
+        };
+        return map[item] || "";
+      }
+
+      function descriptionForRecipient(recipient) {
+        var map = {
+          Experian: "Send to Experian.",
+          Equifax: "Send to Equifax.",
+          TransUnion: "Send to TransUnion.",
+          "Collection agency": "Request validation or authority to collect.",
+          "Original creditor / furnisher": "Send a direct dispute to the company reporting it."
+        };
+        return map[recipient] || "";
+      }
+
+      function summaryOfWrongs(dispute) {
+        if (!dispute.wrongs || !dispute.wrongs.length) return dispute.explanation || "No issue summary entered.";
+        return dispute.wrongs.map(function (id) {
+          var option = wrongOptions.find(function (item) { return item.id === id; });
+          return option ? option.label : id;
+        }).join(", ");
+      }
+
+      function labelForWrong(id) {
+        var option = wrongOptions.find(function (item) { return item.id === id; });
+        return option ? option.label : id || "Other factual error";
+      }
+
+      function analyzeReportText(text) {
+        var fullSsnDetected = /\b\d{3}[- ]?\d{2}[- ]?\d{4}\b/.test(text || "");
+        var chunks = splitReportIntoChunks(text || "");
+        var items = chunks.map(parseReportChunk).filter(function (item) {
+          return item.accountName || item.accountNumber || item.claimedBalance || item.statusReported;
+        });
+        applyDuplicateFlags(items);
+        return {
+          fullSsnDetected: fullSsnDetected,
+          items: items
+        };
+      }
+
+      function splitReportIntoChunks(text) {
+        var normalized = text.replace(/\r/g, "\n").replace(/\t/g, " ").replace(/[ ]{2,}/g, " ");
+        var paragraphs = normalized.split(/\n\s*\n+/).map(function (chunk) { return chunk.trim(); }).filter(Boolean);
+        if (paragraphs.length > 1) {
+          return paragraphs.filter(looksLikeAccountChunk);
+        }
+        var lines = normalized.split("\n").map(function (line) { return line.trim(); }).filter(Boolean);
+        var chunks = [];
+        var current = [];
+        lines.forEach(function (line) {
+          if (isLikelyAccountStart(line) && current.length) {
+            chunks.push(current.join("\n"));
+            current = [];
+          }
+          current.push(line);
+        });
+        if (current.length) chunks.push(current.join("\n"));
+        return chunks.filter(looksLikeAccountChunk);
+      }
+
+      function looksLikeAccountChunk(chunk) {
+        return /account|creditor|collector|collection|balance|past due|status|opened|delinquent|charge[- ]?off|late payment|settled/i.test(chunk || "");
+      }
+
+      function isLikelyAccountStart(line) {
+        return /^(account name|account|tradeline|item)\s*[:#-]/i.test(line || "");
+      }
+
+      function parseReportChunk(chunk) {
+        var clean = stripSensitiveText(chunk);
+        var bureau = firstMatch(clean, /\b(Experian|Equifax|TransUnion)\b/i);
+        bureau = bureau ? titleBureau(bureau) : detectBureauFromContext(clean);
+        var collectionAgency = extractField(clean, ["Collection Agency", "Collector", "Collection Company"]);
+        var creditorName = extractField(clean, ["Account Name", "Creditor", "Furnisher", "Company", "Name"]);
+        var accountName = collectionAgency || creditorName || firstLikelyName(clean);
+        var item = {
+          id: createId(),
+          selected: false,
+          source: "credit-report-analysis",
+          accountName: accountName,
+          accountNumber: extractField(clean, ["Account Number", "Account #", "Acct #", "Acct No", "Reference Number"]),
+          originalCreditor: extractField(clean, ["Original Creditor", "Original Lender"]),
+          collectionAgency: collectionAgency,
+          currentCreditor: extractField(clean, ["Current Creditor", "Current Owner", "Debt Buyer"]),
+          claimedBalance: extractMoneyField(clean, ["Balance", "Current Balance", "Amount Owed", "Amount Claimed"]),
+          pastDueAmount: extractMoneyField(clean, ["Past Due", "Past Due Amount"]),
+          statusReported: extractField(clean, ["Account Status", "Status", "Account Condition"]),
+          paymentStatus: extractField(clean, ["Payment Status", "Pay Status"]),
+          dateOpened: extractDateField(clean, ["Date Opened", "Opened"]),
+          dateClosed: extractDateField(clean, ["Date Closed", "Closed"]),
+          dateFirstDelinquent: extractDateField(clean, ["Date First Delinquent", "First Delinquency", "DOFD"]),
+          lastPaymentDate: extractDateField(clean, ["Last Payment", "Last Payment Date"]),
+          bureau: bureau || "Not sure",
+          possibleIssue: "",
+          confidence: "Low",
+          mainReason: "other_error",
+          itemKind: "Other credit report error",
+          notes: ""
+        };
+        classifyAnalysisItem(item, clean);
+        return item;
+      }
+
+      function classifyAnalysisItem(item, text) {
+        var issues = [];
+        var lower = (text || "").toLowerCase();
+        var hasBalance = numericMoney(item.claimedBalance) > 0;
+        if (/collection|collector|debt buyer/.test(lower) || item.collectionAgency) {
+          item.itemKind = "Collection account";
+          issues.push("Collection account");
+          if (!item.originalCreditor) {
+            issues.push("Collection agency reporting without clear original creditor");
+            item.mainReason = "not_validated";
+          }
+        }
+        if (/charge[- ]?off|charged off/.test(lower)) {
+          item.itemKind = "Charge-off account";
+          issues.push("Charge-off account");
+          if (item.mainReason === "other_error") item.mainReason = "wrong_status";
+        }
+        if (/late payment|30 days late|60 days late|90 days late|120 days late|late\s*[:\-]/.test(lower)) {
+          item.itemKind = "Late payment";
+          issues.push("Late payment");
+          if (item.mainReason === "other_error") item.mainReason = "wrong_status";
+        }
+        if (/paid|settled|settlement|paid in full|paid as agreed/.test(lower) && hasBalance) {
+          item.itemKind = "Paid or settled account reporting wrong";
+          issues.push("Paid or settled language with balance still shown");
+          item.mainReason = "paid_wrong";
+        }
+        if (/original creditor\s*[:\-]\s*(unknown|not listed|n\/a|none|--)?\s*$/im.test(text) || (!item.originalCreditor && item.itemKind === "Collection account")) {
+          issues.push("Original creditor missing or unclear");
+          if (item.mainReason === "other_error") item.mainReason = "wrong_original_creditor";
+        }
+        if (bureauBalanceMismatch(text)) {
+          issues.push("Different information across credit bureaus");
+          item.mainReason = "bureau_mismatch";
+        }
+        if (/status.*(open|closed).*status.*(closed|open)|paid.*unpaid|settled.*balance/i.test(text)) {
+          issues.push("Account status appears inconsistent");
+          if (item.mainReason === "other_error") item.mainReason = "wrong_status";
+        }
+        if (isPossiblyObsolete(item.dateFirstDelinquent || item.dateClosed || item.dateOpened)) {
+          issues.push("Possible obsolete reporting based on visible dates");
+          item.mainReason = "too_old";
+        }
+        if (!issues.length) {
+          issues.push("Other credit report error");
+          item.mainReason = item.mainReason || "other_error";
+        }
+        if (item.mainReason === "other_error") {
+          if (/balance/i.test(text)) item.mainReason = "wrong_balance";
+          else if (/date|opened|closed|delinquent/i.test(text)) item.mainReason = "wrong_dates";
+        }
+        item.possibleIssue = issues.join("; ");
+        item.confidence = issues.length >= 2 || /collection|charge[- ]?off|late payment|settled|paid/i.test(text) ? "High" : (item.accountName && (item.claimedBalance || item.statusReported) ? "Medium" : "Low");
+        item.notes = defaultAnalysisNote(item);
+      }
+
+      function applyDuplicateFlags(items) {
+        var groups = {};
+        items.forEach(function (item) {
+          var key = normalizeAccountKey(item.accountName || item.originalCreditor || "");
+          if (!key) return;
+          groups[key] = groups[key] || [];
+          groups[key].push(item);
+        });
+        Object.keys(groups).forEach(function (key) {
+          if (groups[key].length < 2) return;
+          groups[key].forEach(function (item) {
+            item.itemKind = "Duplicate account";
+            item.mainReason = "duplicate";
+            item.possibleIssue = item.possibleIssue.indexOf("Duplicate or similar account names") >= 0
+              ? item.possibleIssue
+              : item.possibleIssue + "; Duplicate or similar account names";
+            item.confidence = "High";
+          });
+        });
+      }
+
+      function draftFromAnalysisItem(item) {
+        var draft = createEmptyDraft();
+        draft.itemKind = item.itemKind || "Other credit report error";
+        draft.recipient = recommendedRecipientFromAnalysis(item);
+        draft.wrongs = unique([item.mainReason || "other_error"].concat(wrongsFromIssueText(item.possibleIssue || "")));
+        draft.accountName = stripSensitiveText(item.accountName || item.collectionAgency || item.originalCreditor || "");
+        draft.accountNumber = stripSensitiveText(item.accountNumber || "");
+        draft.claimedBalance = stripSensitiveText(item.claimedBalance || "");
+        draft.originalCreditor = stripSensitiveText(item.originalCreditor || "");
+        draft.bureau = item.bureau || "Not sure";
+        draft.desiredResult = desiredFromReason(item.mainReason);
+        draft.explanation = stripSensitiveText(item.notes || defaultAnalysisNote(item));
+        draft.supportingDocs = ["Copy of credit report page"];
+        draft.advanced.currentCreditor = stripSensitiveText(item.currentCreditor || "");
+        draft.advanced.dateOpened = item.dateOpened || "";
+        draft.advanced.dateClosed = item.dateClosed || "";
+        draft.advanced.dateFirstDelinquent = item.dateFirstDelinquent || "";
+        draft.advanced.lastPaymentDate = item.lastPaymentDate || "";
+        draft.advanced.extraNotes = "Created from credit report analysis. Extracted issue: " + stripSensitiveText(item.possibleIssue || "Possible factual issue.");
+        return draft;
+      }
+
+      function recommendedRecipientFromAnalysis(item) {
+        if ((item.mainReason === "not_validated" || item.mainReason === "no_authority") && (item.collectionAgency || item.itemKind === "Collection account")) return "Collection agency";
+        if (item.bureau === "Experian" || item.bureau === "Equifax" || item.bureau === "TransUnion") return item.bureau;
+        return "Experian";
+      }
+
+      function desiredFromReason(reason) {
+        if (reason === "not_validated" || reason === "no_authority") return "Validate";
+        if (reason === "duplicate" || reason === "too_old") return "Delete";
+        if (reason === "paid_wrong" || reason === "wrong_status") return "Update";
+        return "Correct";
+      }
+
+      function wrongsFromIssueText(text) {
+        var lower = (text || "").toLowerCase();
+        var wrongs = [];
+        if (/balance/.test(lower)) wrongs.push("wrong_balance");
+        if (/duplicate/.test(lower)) wrongs.push("duplicate");
+        if (/date|obsolete|old/.test(lower)) wrongs.push("wrong_dates");
+        if (/original creditor/.test(lower)) wrongs.push("wrong_original_creditor");
+        if (/status|late|charge/.test(lower)) wrongs.push("wrong_status");
+        if (/paid|settled/.test(lower)) wrongs.push("paid_wrong");
+        if (/validat/.test(lower)) wrongs.push("not_validated");
+        if (/authority/.test(lower)) wrongs.push("no_authority");
+        if (/bureau|inconsistent|different/.test(lower)) wrongs.push("bureau_mismatch");
+        return wrongs;
+      }
+
+      function defaultAnalysisNote(item) {
+        return "The report text suggests a possible issue: " + (item.possibleIssue || "Other factual issue") + ". I want this reviewed for accuracy, completeness, verifiability, duplication, obsolescence, or inconsistency based on the report information and my records.";
+      }
+
+      function analysisSummaryText(items) {
+        var lines = [
+          "Credit Report Analysis Summary",
+          "",
+          "Generated: " + new Date().toLocaleString(),
+          "",
+          "This summary lists possible issues extracted locally from pasted or uploaded report text. Review all details before generating or sending any dispute letter.",
+          ""
+        ];
+        (items || []).forEach(function (item, index) {
+          lines.push((index + 1) + ". " + (item.accountName || "Unknown account"));
+          lines.push("   Type: " + (item.itemKind || "Not set"));
+          lines.push("   Bureau: " + (item.bureau || "Not sure"));
+          lines.push("   Balance: " + (item.claimedBalance || "Not shown"));
+          lines.push("   Status: " + (item.statusReported || "Not shown"));
+          lines.push("   Possible issue: " + (item.possibleIssue || "Not set"));
+          lines.push("   Confidence: " + (item.confidence || "Low"));
+          lines.push("");
+        });
+        return lines.join("\n");
+      }
+
+      function findAnalysisItem(id) {
+        return (state.analyzer.items || []).find(function (item) { return item.id === id; });
+      }
+
+      function extractField(text, labels) {
+        for (var i = 0; i < labels.length; i += 1) {
+          var escaped = labels[i].replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+          var regex = new RegExp("(?:^|\\n)\\s*" + escaped + "\\s*[:#-]\\s*([^\\n]+)", "i");
+          var match = text.match(regex);
+          if (match && match[1]) return cleanExtractedValue(match[1]);
+        }
+        return "";
+      }
+
+      function extractMoneyField(text, labels) {
+        var value = extractField(text, labels);
+        if (value) {
+          var money = value.match(/\$?\s*\d[\d,]*(?:\.\d{2})?/);
+          return money ? money[0].replace(/\s+/g, "") : cleanExtractedValue(value);
+        }
+        var match = text.match(/\$\s*\d[\d,]*(?:\.\d{2})?/);
+        return match ? match[0].replace(/\s+/g, "") : "";
+      }
+
+      function extractDateField(text, labels) {
+        var value = extractField(text, labels);
+        if (!value) return "";
+        var match = value.match(/\b(?:\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}|\d{4}[\/-]\d{1,2}[\/-]\d{1,2}|(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s+\d{4})\b/i);
+        return match ? match[0] : value.slice(0, 24);
+      }
+
+      function firstMatch(text, regex) {
+        var match = text.match(regex);
+        return match ? match[1] || match[0] : "";
+      }
+
+      function firstLikelyName(text) {
+        var lines = text.split("\n").map(function (line) { return cleanExtractedValue(line); }).filter(Boolean);
+        for (var i = 0; i < lines.length; i += 1) {
+          if (!/^(account|balance|status|date|opened|closed|past due|payment|bureau|credit report|transunion|experian|equifax)\b/i.test(lines[i])) {
+            return stripSensitiveText(lines[i]).slice(0, 80);
+          }
+        }
+        return "";
+      }
+
+      function detectBureauFromContext(text) {
+        if (/experian/i.test(text)) return "Experian";
+        if (/equifax/i.test(text)) return "Equifax";
+        if (/transunion|trans union/i.test(text)) return "TransUnion";
+        return "Not sure";
+      }
+
+      function titleBureau(value) {
+        if (/experian/i.test(value)) return "Experian";
+        if (/equifax/i.test(value)) return "Equifax";
+        if (/transunion|trans union/i.test(value)) return "TransUnion";
+        return "Not sure";
+      }
+
+      function bureauBalanceMismatch(text) {
+        var matches = Array.from(text.matchAll(/\b(Experian|Equifax|TransUnion)\b[^\n$]{0,60}\$?\s*(\d[\d,]*(?:\.\d{2})?)/gi));
+        var values = matches.map(function (match) { return match[2].replace(/[,$]/g, ""); });
+        return values.length > 1 && unique(values).length > 1;
+      }
+
+      function numericMoney(value) {
+        var number = String(value || "").replace(/[^0-9.]/g, "");
+        return number ? Number(number) || 0 : 0;
+      }
+
+      function isPossiblyObsolete(value) {
+        if (!value) return false;
+        var date = new Date(value);
+        if (Number.isNaN(date.getTime())) return false;
+        var cutoff = new Date();
+        cutoff.setFullYear(cutoff.getFullYear() - 7);
+        return date < cutoff;
+      }
+
+      function normalizeAccountKey(value) {
+        return String(value || "").toLowerCase().replace(/[^a-z0-9]/g, "").replace(/(inc|llc|corp|company|bank|na)$/i, "").slice(0, 24);
+      }
+
+      function cleanExtractedValue(value) {
+        return stripSensitiveText(String(value || "").replace(/\s+/g, " ").trim().replace(/[|•]+$/g, ""));
+      }
+
+      function stripSensitiveText(value) {
+        return String(value || "")
+          .replace(/\b\d{3}[- ]?\d{2}[- ]?\d{4}\b/g, "[full SSN removed]")
+          .replace(/\b\d{9}\b/g, "[full SSN removed]");
+      }
+
+      function loadState() {
+        try {
+          var stored = window.localStorage.getItem(STORAGE_KEY);
+          if (!stored) return defaultState();
+          return normalizeState(JSON.parse(stored));
+        } catch (error) {
+          return defaultState();
+        }
+      }
+
+      function saveState() {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      }
+
+      function defaultState() {
+        return {
+          screen: "home",
+          step: 1,
+          personal: { fullName: "", mailingAddress: "", cityStateZip: "", contact: "" },
+          draft: createEmptyDraft(),
+          currentLetter: null,
+          disputes: [],
+          letters: [],
+          tracker: [],
+          analyzer: {
+            items: [],
+            summary: {},
+            fullSsnWarning: "",
+            lastAnalyzedAt: ""
+          }
+        };
+      }
+
+      function createEmptyDraft() {
+        var now = new Date().toISOString();
+        return {
+          id: createId(),
+          createdAt: now,
+          updatedAt: now,
+          itemKind: "Collection account",
+          recipient: "Experian",
+          wrongs: [],
+          accountName: "",
+          accountNumber: "",
+          claimedBalance: "",
+          originalCreditor: "",
+          bureau: "Experian",
+          explanation: "",
+          desiredResult: "Correct",
+          supportingDocs: [],
+          status: "Draft",
+          letterType: "",
+          letterBody: "",
+          advanced: {
+            dateOpened: "",
+            dateClosed: "",
+            dateFirstDelinquent: "",
+            lastPaymentDate: "",
+            currentCreditor: "",
+            previousDisputeDate: "",
+            certifiedMailNumber: "",
+            extraNotes: ""
+          }
+        };
+      }
+
+      function normalizeState(raw) {
+        var base = defaultState();
+        raw = raw && typeof raw === "object" ? raw : {};
+        base.screen = ["home", "wizard", "preview", "saved", "tracker", "analyze"].indexOf(raw.screen) >= 0 ? raw.screen : "home";
+        base.step = Math.min(5, Math.max(1, Number(raw.step || 1) || 1));
+        base.personal = normalizePersonal(raw.personal || raw.personalInfo || {});
+        base.draft = normalizeDraft(raw.draft || raw.current || createEmptyDraft());
+        base.currentLetter = raw.currentLetter ? normalizeLetter(raw.currentLetter) : null;
+        base.disputes = Array.isArray(raw.disputes) ? raw.disputes.map(normalizeDraft) : [];
+        if (!base.disputes.length && Array.isArray(raw.items)) base.disputes = raw.items.map(oldItemToDraft);
+        base.letters = Array.isArray(raw.letters) ? raw.letters.map(normalizeLetter) : [];
+        base.tracker = Array.isArray(raw.tracker) ? raw.tracker.map(normalizeTracker) : [];
+        base.analyzer = normalizeAnalyzer(raw.analyzer || {});
+        if (base.screen === "preview" && !base.currentLetter) base.screen = "home";
+        return base;
+      }
+
+      function normalizeAnalyzer(raw) {
+        raw = raw && typeof raw === "object" ? raw : {};
+        return {
+          items: Array.isArray(raw.items) ? raw.items.map(normalizeAnalysisItem) : [],
+          summary: raw.summary && typeof raw.summary === "object" ? raw.summary : {},
+          fullSsnWarning: raw.fullSsnWarning || "",
+          lastAnalyzedAt: raw.lastAnalyzedAt || ""
+        };
+      }
+
+      function normalizeAnalysisItem(raw) {
+        raw = raw && typeof raw === "object" ? raw : {};
+        var item = {
+          id: raw.id || createId(),
+          selected: Boolean(raw.selected),
+          source: raw.source || "credit-report-analysis",
+          accountName: stripSensitiveText(raw.accountName || ""),
+          accountNumber: stripSensitiveText(raw.accountNumber || ""),
+          originalCreditor: stripSensitiveText(raw.originalCreditor || ""),
+          collectionAgency: stripSensitiveText(raw.collectionAgency || ""),
+          currentCreditor: stripSensitiveText(raw.currentCreditor || ""),
+          claimedBalance: stripSensitiveText(raw.claimedBalance || ""),
+          pastDueAmount: stripSensitiveText(raw.pastDueAmount || ""),
+          statusReported: stripSensitiveText(raw.statusReported || ""),
+          paymentStatus: stripSensitiveText(raw.paymentStatus || ""),
+          dateOpened: raw.dateOpened || "",
+          dateClosed: raw.dateClosed || "",
+          dateFirstDelinquent: raw.dateFirstDelinquent || "",
+          lastPaymentDate: raw.lastPaymentDate || "",
+          bureau: raw.bureau || "Not sure",
+          possibleIssue: stripSensitiveText(raw.possibleIssue || ""),
+          confidence: raw.confidence || "Low",
+          mainReason: raw.mainReason || "other_error",
+          itemKind: itemKinds.indexOf(raw.itemKind) >= 0 ? raw.itemKind : "Other credit report error",
+          notes: stripSensitiveText(raw.notes || "")
+        };
+        if (!item.notes) item.notes = defaultAnalysisNote(item);
+        return item;
+      }
+
+      function normalizePersonal(raw) {
+        raw = raw && typeof raw === "object" ? raw : {};
+        return {
+          fullName: raw.fullName || "",
+          mailingAddress: raw.mailingAddress || "",
+          cityStateZip: raw.cityStateZip || "",
+          contact: raw.contact || raw.email || raw.phone || ""
+        };
+      }
+
+      function normalizeDraft(raw) {
+        raw = raw && typeof raw === "object" ? raw : {};
+        var empty = createEmptyDraft();
+        var draft = Object.assign(empty, raw || {});
+        draft.id = draft.id || createId();
+        draft.itemKind = itemKinds.indexOf(draft.itemKind) >= 0 ? draft.itemKind : convertOldItemKind(raw.itemType);
+        draft.recipient = recipients.indexOf(draft.recipient) >= 0 ? draft.recipient : convertOldRecipient(raw.preferredRecipient);
+        draft.wrongs = Array.isArray(draft.wrongs) ? draft.wrongs : convertOldWrongs(raw.disputeReasons, raw.disputedFields, raw.disputeReason);
+        draft.accountName = draft.accountName || raw.collectionAgencyName || raw.furnisherName || raw.currentCreditor || raw.originalCreditor || "";
+        draft.accountNumber = draft.accountNumber || raw.accountReference || "";
+        draft.claimedBalance = draft.claimedBalance || "";
+        draft.originalCreditor = draft.originalCreditor || "";
+        draft.bureau = draft.bureau || (Array.isArray(raw.bureaus) ? raw.bureaus[0] : "Experian") || "Experian";
+        draft.explanation = draft.explanation || raw.specificFactualError || raw.bureauErrorSummary || "";
+        draft.desiredResult = desiredResults.indexOf(draft.desiredResult) >= 0 ? draft.desiredResult : convertOldDesired(raw.desiredOutcome);
+        draft.supportingDocs = (Array.isArray(draft.supportingDocs) ? draft.supportingDocs : (Array.isArray(raw.supportingDocuments) ? raw.supportingDocuments : [])).map(enclosureLabel);
+        draft.advanced = Object.assign(empty.advanced, raw.advanced || {});
+        draft.advanced.dateOpened = draft.advanced.dateOpened || raw.dateOpened || "";
+        draft.advanced.dateClosed = draft.advanced.dateClosed || raw.dateClosed || "";
+        draft.advanced.dateFirstDelinquent = draft.advanced.dateFirstDelinquent || raw.dateFirstDelinquent || "";
+        draft.advanced.lastPaymentDate = draft.advanced.lastPaymentDate || raw.lastPaymentDate || "";
+        draft.advanced.currentCreditor = draft.advanced.currentCreditor || raw.currentCreditor || "";
+        draft.advanced.extraNotes = draft.advanced.extraNotes || raw.notes || "";
+        return draft;
+      }
+
+      function oldItemToDraft(item) {
+        return normalizeDraft(item);
+      }
+
+      function normalizeLetter(raw) {
+        raw = raw && typeof raw === "object" ? raw : {};
+        return {
+          id: raw.id || createId(),
+          disputeId: raw.disputeId || raw.recordId || raw.itemId || "",
+          accountName: raw.accountName || "",
+          recipient: raw.recipient || raw.recipientName || "",
+          letterType: raw.letterType || "Credit bureau dispute letter",
+          createdAt: raw.createdAt || new Date().toISOString(),
+          body: raw.body || ""
+        };
+      }
+
+      function normalizeTracker(raw) {
+        raw = raw && typeof raw === "object" ? raw : {};
+        var mailed = raw.dateMailed || "";
+        var baseDate = mailed || raw.dateGenerated || raw.dateCreated || isoDate();
+        return {
+          id: raw.id || createId(),
+          disputeId: raw.disputeId || raw.recordId || raw.disputeItemId || "",
+          accountName: raw.accountName || "",
+          recipient: raw.recipient || "",
+          letterType: raw.letterType || "Credit bureau dispute letter",
+          dateMailed: mailed,
+          trackingNumber: raw.trackingNumber || raw.certifiedMailTracking || "",
+          responseDeadline: raw.responseDeadline || raw.followUpDate || addDays(baseDate, 30),
+          followUpDate: raw.followUpDate || raw.responseDeadline || addDays(baseDate, 30),
+          extendedDeadline: raw.extendedDeadline || addDays(baseDate, 45),
+          responseReceived: raw.responseReceived || "No response yet",
+          result: raw.result || "Pending",
+          nextAction: raw.nextAction || raw.nextRecommendedAction || "Mail the letter, keep copies, and calendar the response deadline."
+        };
+      }
+
+      function convertOldItemKind(value) {
+        if (value === "Furnisher") return "Charge-off account";
+        if (value === "Goodwill") return "Late payment";
+        return "Collection account";
+      }
+
+      function convertOldRecipient(value) {
+        if (recipients.indexOf(value) >= 0) return value;
+        if (value === "Collection agency") return "Collection agency";
+        if (value === "Original creditor/furnisher") return "Original creditor / furnisher";
+        return "Experian";
+      }
+
+      function convertOldDesired(value) {
+        if (/delete/i.test(value || "")) return "Delete";
+        if (/valid/i.test(value || "")) return "Validate";
+        if (/update/i.test(value || "")) return "Update";
+        if (/investigate/i.test(value || "")) return "Investigate";
+        return "Correct";
+      }
+
+      function convertOldWrongs(reasons, fields, singleReason) {
+        var text = []
+          .concat(Array.isArray(reasons) ? reasons : [])
+          .concat(Array.isArray(fields) ? fields : [])
+          .concat(singleReason || "")
+          .join(" ")
+          .toLowerCase();
+        var wrongs = [];
+        if (/balance/.test(text)) wrongs.push("wrong_balance");
+        if (/not mine|ownership|liability/.test(text)) wrongs.push("not_mine");
+        if (/duplicate/.test(text)) wrongs.push("duplicate");
+        if (/date/.test(text)) wrongs.push("wrong_dates");
+        if (/original creditor/.test(text)) wrongs.push("wrong_original_creditor");
+        if (/status/.test(text)) wrongs.push("wrong_status");
+        if (/paid|settled/.test(text)) wrongs.push("paid_wrong");
+        if (/validated|validation/.test(text)) wrongs.push("not_validated");
+        if (/authority/.test(text)) wrongs.push("no_authority");
+        if (/bureau|inconsistent|differs/.test(text)) wrongs.push("bureau_mismatch");
+        if (/old|obsolete/.test(text)) wrongs.push("too_old");
+        return unique(wrongs);
+      }
+
+      function copyDraft(draft) {
+        return normalizeDraft(JSON.parse(JSON.stringify(draft)));
+      }
+
+      function findDispute(id) {
+        return state.disputes.find(function (item) { return item.id === id; });
+      }
+
+      function findTracker(id) {
+        return state.tracker.find(function (item) { return item.id === id; });
+      }
+
+      function toggleArray(array, value, checkedValue) {
+        if (checkedValue && array.indexOf(value) === -1) array.push(value);
+        if (!checkedValue) {
+          var index = array.indexOf(value);
+          if (index >= 0) array.splice(index, 1);
+        }
+      }
+
+      function createId() {
+        return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 9);
+      }
+
+      function isoDate(date) {
+        var d = date ? new Date(date) : new Date();
+        return d.toISOString().slice(0, 10);
+      }
+
+      function addDays(dateText, days) {
+        var d = dateText ? new Date(dateText + "T00:00:00") : new Date();
+        d.setDate(d.getDate() + days);
+        return isoDate(d);
+      }
+
+      function formatDate(value) {
+        return value ? String(value).slice(0, 10) : "Not set";
+      }
+
+      function unique(items) {
+        return items.filter(function (item, index) { return items.indexOf(item) === index; });
+      }
+
+      function checked(value) {
+        return value ? "checked" : "";
+      }
+
+      function selected(value) {
+        return value ? "selected" : "";
+      }
+
+      function escapeHtml(value) {
+        return String(value == null ? "" : value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function escapeAttr(value) {
+        return escapeHtml(value).replace(/`/g, "&#096;");
+      }
+
+      function registerPwa() {
+        if (APP_BUILD !== "online" || isFileMode() || !("serviceWorker" in navigator)) return;
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("./sw.js").catch(function () {});
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{
+  "name": "ABK Credit Management",
+  "short_name": "ABK Credit",
+  "description": "Create professional credit dispute letters, analyze credit report PDFs locally in the browser, and track dispute responses.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f5b66",
+  "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
